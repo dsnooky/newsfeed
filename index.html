@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trending News Philippines</title>
 <style>
-/* Reset and basic styling */
 body {font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333;}
 header {background:#007bff;color:white;padding:20px;text-align:center;}
 header h1 {margin:0;font-size:1.8rem;}
@@ -14,7 +13,7 @@ h2 {margin-bottom:10px;}
 
 /* Top Stories & Entertainment */
 .top-news-container, .top-ent-container {display:flex; gap:15px; flex-wrap:wrap; opacity:0; transform:translateY(20px); animation:fadeSlide 0.8s forwards;}
-.top-card {background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); flex:1 1 calc(33% - 15px); transition: transform 0.3s, box-shadow 0.3s; opacity:0; animation:fadeIn 0.5s forwards;}
+.top-card {background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); flex:1 1 calc(33% - 15px); transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s; opacity:0; animation:fadeIn 0.5s forwards;}
 .top-card img {width:100%; height:180px; object-fit:cover;}
 .top-card-content {padding:10px;}
 .top-card-content h3 {margin:0 0 8px; font-size:1rem;}
@@ -23,18 +22,15 @@ h2 {margin-bottom:10px;}
 .top-card-content a:hover {text-decoration:underline;}
 .top-card:hover {transform:translateY(-5px); box-shadow:0 5px 20px rgba(0,0,0,0.15);}
 
-/* Search Bar */
 .search-bar {margin:15px 0; text-align:center;}
 .search-bar input {width:90%; max-width:500px; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:1rem;}
 
-/* Tabs */
 .tabs {display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; justify-content:center;}
 .tab {padding:8px 15px; background:#e0e0e0; border-radius:5px; cursor:pointer; transition:0.3s;}
 .tab.active {background:#007bff; color:white;}
 
-/* News Grid */
-.news-container {display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:15px;}
-.news-card {background:white; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.1); overflow:hidden; transition: transform 0.3s, box-shadow 0.3s; opacity:0; animation:fadeIn 0.5s forwards;}
+.news-container {display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:15px; position:relative;}
+.news-card {background:white; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.1); overflow:hidden; transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s; opacity:0;}
 .news-card img {width:100%; height:150px; object-fit:cover;}
 .news-card-content {padding:10px;}
 .news-card-content h3 {margin:0 0 8px; font-size:1rem;}
@@ -43,18 +39,18 @@ h2 {margin-bottom:10px;}
 .news-card-content a:hover {text-decoration:underline;}
 .news-card:hover {transform:translateY(-5px); box-shadow:0 5px 20px rgba(0,0,0,0.15);}
 
-/* Footer */
 footer {text-align:center; padding:15px; background:#007bff; color:white; margin-top:30px; font-size:0.85rem;}
 
 /* Animations */
 @keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
 @keyframes fadeSlide {from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
+.fadeOut {opacity:0; transform:translateY(-20px); transition:opacity 0.3s, transform 0.3s;}
+.fadeInCard {opacity:1; transform:translateY(0); transition:opacity 0.5s, transform 0.5s;}
 
 @media(max-width:768px){
     .top-card {flex:1 1 48%;}
     .news-card img {height:130px;}
 }
-
 @media(max-width:480px){
     .top-card {flex:1 1 100%;}
     .news-card img {height:120px;}
@@ -69,28 +65,20 @@ footer {text-align:center; padding:15px; background:#007bff; color:white; margin
 </header>
 
 <main>
-<!-- Top Trending News -->
 <div class="top-news" id="top-news">
 <h2>Trending Top Stories</h2>
-<div class="top-news-container" id="top-news-container">
-<p>Loading top stories...</p>
-</div>
+<div class="top-news-container" id="top-news-container"><p>Loading top stories...</p></div>
 </div>
 
-<!-- Top Entertainment News -->
 <div class="top-entertainment" id="top-entertainment">
 <h2>Top Entertainment News</h2>
-<div class="top-ent-container" id="top-ent-container">
-<p>Loading entertainment news...</p>
-</div>
+<div class="top-ent-container" id="top-ent-container"><p>Loading entertainment news...</p></div>
 </div>
 
-<!-- Search Bar -->
 <div class="search-bar">
 <input type="text" id="search-input" placeholder="Search news...">
 </div>
 
-<!-- Category Tabs -->
 <div class="tabs" id="tabs">
 <div class="tab active" data-category="All">All</div>
 <div class="tab" data-category="Politics">Politics</div>
@@ -99,7 +87,6 @@ footer {text-align:center; padding:15px; background:#007bff; color:white; margin
 <div class="tab" data-category="Technology">Technology</div>
 </div>
 
-<!-- News Grid -->
 <div class="news-container" id="news-container">
 <p>Loading news...</p>
 </div>
@@ -110,13 +97,13 @@ footer {text-align:center; padding:15px; background:#007bff; color:white; margin
 </footer>
 
 <script>
-// RSS feeds
+// List of RSS feeds
 const rssFeeds = [
-{name: 'Inquirer', url: 'https://www.inquirer.net/feed'},
-{name: 'Philippine Star', url: 'https://www.philstar.com/rss'},
-{name: 'GMA News', url: 'https://www.gmanetwork.com/news/rss/'},
-{name: 'Rappler', url: 'https://www.rappler.com/rss'},
-{name: 'Philippine Entertainment', url: 'https://www.pep.ph/rss/news/1'}
+'https://www.inquirer.net/feed',
+'https://www.philstar.com/rss',
+'https://www.gmanetwork.com/news/rss/',
+'https://www.rappler.com/rss',
+'https://www.pep.ph/rss/news/1' // entertainment
 ];
 
 const newsContainer = document.getElementById('news-container');
@@ -125,171 +112,109 @@ const topEntContainer = document.getElementById('top-ent-container');
 const searchInput = document.getElementById('search-input');
 const tabs = document.querySelectorAll('.tab');
 
-let allArticles = [];
-let filteredArticles = [];
-let articlesLoaded = 0;
-const articlesPerBatch = 10;
+let allArticles = [], filteredArticles = [], articlesLoaded=0, articlesPerBatch=10;
 
-// Extract image from content
-function extractImageFromContent(html) {
-    if (!html) return null;
-    const imgMatch = html.match(/<img.*?src="(.*?)"/);
-    return imgMatch ? imgMatch[1] : null;
+// Helper: extract image from content
+function extractImageFromContent(html){
+    if(!html) return null;
+    const match = html.match(/<img.*?src="(.*?)"/);
+    return match ? match[1] : null;
 }
 
-// Category detection
-function getCategory(title) {
-    const lower = title.toLowerCase();
-    if (lower.includes('politic')) return 'Politics';
-    if (lower.includes('entertainment') || lower.includes('showbiz') || lower.includes('celebrity')) return 'Entertainment';
-    if (lower.includes('sport') || lower.includes('basketball') || lower.includes('football')) return 'Sports';
-    if (lower.includes('tech') || lower.includes('technology') || lower.includes('gadgets')) return 'Technology';
+// Detect category
+function getCategory(title){
+    const t = title.toLowerCase();
+    if(t.includes('politic')) return 'Politics';
+    if(t.includes('entertainment') || t.includes('showbiz') || t.includes('celebrity')) return 'Entertainment';
+    if(t.includes('sport') || t.includes('basketball') || t.includes('football')) return 'Sports';
+    if(t.includes('tech') || t.includes('technology') || t.includes('gadgets')) return 'Technology';
     return 'All';
 }
 
-// Browser caching
-function saveCache() { localStorage.setItem('newsCache', JSON.stringify(allArticles)); }
-function loadCache() { 
-    const cache = localStorage.getItem('newsCache');
-    if(cache) allArticles = JSON.parse(cache);
+// Fetch RSS feed via AllOrigins proxy
+async function fetchFeed(url){
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy);
+    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents,"text/xml");
+    return Array.from(xml.querySelectorAll("item")).map(item=>{
+        const title = item.querySelector("title")?.textContent || '';
+        const link = item.querySelector("link")?.textContent || '#';
+        const pubDate = new Date(item.querySelector("pubDate")?.textContent || new Date());
+        const description = item.querySelector("description")?.textContent || '';
+        const image = extractImageFromContent(description) || '';
+        if(!image) return null; // skip if no image
+        return {title,link,pubDate,image,category:getCategory(title)};
+    }).filter(Boolean);
 }
 
-// Fetch all feeds in parallel
-async function fetchNews() {
-    loadCache(); // show cached first
-    displayTopStories();
-    displayTopEntertainment();
-    applyFilters();
-
-    const feedPromises = rssFeeds.map(feed => {
-        const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
-        return fetch(rss2jsonUrl)
-        .then(res => res.json())
-        .catch(err => {console.error(feed.name, err); return {items:[]};});
-    });
-
-    const results = await Promise.all(feedPromises);
+// Fetch all feeds
+async function fetchAllFeeds(){
     allArticles = [];
-
-    results.forEach(data => {
-        data.items.forEach(item => {
-            let image = item.enclosure?.link || item.thumbnail || extractImageFromContent(item.content);
-            if(!image) return; // skip if no image
-            let category = getCategory(item.title);
-            allArticles.push({
-                title: item.title,
-                link: item.link,
-                pubDate: new Date(item.pubDate),
-                image: image,
-                category: category
-            });
-        });
-    });
-
-    allArticles.sort((a,b) => b.pubDate - a.pubDate);
-    saveCache();
+    for(const url of rssFeeds){
+        try{
+            const articles = await fetchFeed(url);
+            allArticles.push(...articles);
+        }catch(e){console.error('Error fetching',url,e);}
+    }
+    allArticles.sort((a,b)=>b.pubDate-a.pubDate);
     displayTopStories();
     displayTopEntertainment();
     applyFilters();
 }
 
 // Display top 3 stories
-function displayTopStories() {
-    topNewsContainer.innerHTML = '';
-    const top3 = allArticles.slice(0,3);
-    top3.forEach((article,index) => {
-        const card = document.createElement('div');
-        card.classList.add('top-card');
-        card.style.animationDelay = `${index*0.1}s`;
-        card.innerHTML = `
-            <img src="${article.image}" alt="News Image" loading="lazy">
-            <div class="top-card-content">
-                <h3>${article.title}</h3>
-                <p>${article.pubDate.toLocaleString()} | ${article.category}</p>
-                <a href="${article.link}" target="_blank">Read More</a>
-            </div>
-        `;
+function displayTopStories(){
+    topNewsContainer.innerHTML='';
+    allArticles.slice(0,3).forEach((a,i)=>{
+        const card=document.createElement('div'); card.classList.add('top-card'); card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<img src="${a.image}" alt="News Image" loading="lazy"><div class="top-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()} | ${a.category}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
         topNewsContainer.appendChild(card);
     });
 }
 
-// Display top 3 entertainment stories
-function displayTopEntertainment() {
-    topEntContainer.innerHTML = '';
-    const entArticles = allArticles.filter(a => a.category === 'Entertainment').slice(0,3);
-    entArticles.forEach((article,index) => {
-        const card = document.createElement('div');
-        card.classList.add('top-card');
-        card.style.animationDelay = `${index*0.1}s`;
-        card.innerHTML = `
-            <img src="${article.image}" alt="Entertainment Image" loading="lazy">
-            <div class="top-card-content">
-                <h3>${article.title}</h3>
-                <p>${article.pubDate.toLocaleString()}</p>
-                <a href="${article.link}" target="_blank">Read More</a>
-            </div>
-        `;
+// Display top 3 entertainment
+function displayTopEntertainment(){
+    topEntContainer.innerHTML='';
+    allArticles.filter(a=>a.category==='Entertainment').slice(0,3).forEach((a,i)=>{
+        const card=document.createElement('div'); card.classList.add('top-card'); card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<img src="${a.image}" alt="Entertainment Image" loading="lazy"><div class="top-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
         topEntContainer.appendChild(card);
     });
 }
 
-// Infinite scroll
-function displayNextBatch() {
-    const toDisplay = filteredArticles.slice(articlesLoaded, articlesLoaded + articlesPerBatch);
-    toDisplay.forEach((article,index) => {
-        const card = document.createElement('div');
-        card.classList.add('news-card');
-        card.style.animationDelay = `${index*0.05}s`;
-        card.innerHTML = `
-            <img src="${article.image}" alt="News Image" loading="lazy">
-            <div class="news-card-content">
-                <h3>${article.title}</h3>
-                <p>${article.pubDate.toLocaleString()} | ${article.category}</p>
-                <a href="${article.link}" target="_blank">Read More</a>
-            </div>
-        `;
+// Display next batch (infinite scroll)
+function displayNextBatch(){
+    const batch = filteredArticles.slice(articlesLoaded, articlesLoaded+articlesPerBatch);
+    batch.forEach((a,i)=>{
+        const card=document.createElement('div'); card.classList.add('news-card'); card.style.animationDelay=`${i*0.05}s`;
+        card.innerHTML=`<img src="${a.image}" alt="News Image" loading="lazy"><div class="news-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()} | ${a.category}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
         newsContainer.appendChild(card);
+        setTimeout(()=>{card.classList.add('fadeInCard');},50);
     });
-    articlesLoaded += toDisplay.length;
+    articlesLoaded += batch.length;
 }
 
-// Apply filters
-function applyFilters() {
+// Apply filters & animate tab switching
+function applyFilters(){
     const activeTab = document.querySelector('.tab.active').dataset.category;
     const query = searchInput.value.toLowerCase();
-    filteredArticles = allArticles.filter(a => 
-        (activeTab === 'All' || a.category === activeTab) &&
-        a.title.toLowerCase().includes(query)
-    );
-    newsContainer.innerHTML = '';
-    articlesLoaded = 0;
-    displayNextBatch();
+    document.querySelectorAll('.news-card').forEach(c=>c.classList.add('fadeOut'));
+    setTimeout(()=>{
+        filteredArticles = allArticles.filter(a=>(activeTab==='All'||a.category===activeTab)&&a.title.toLowerCase().includes(query));
+        newsContainer.innerHTML=''; articlesLoaded=0; displayNextBatch();
+    },300);
 }
 
-// Scroll event
-window.addEventListener('scroll', () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-        if (articlesLoaded < filteredArticles.length) displayNextBatch();
-    }
-});
+// Events
+window.addEventListener('scroll',()=>{if(window.innerHeight+window.scrollY>=document.body.offsetHeight-500){if(articlesLoaded<filteredArticles.length) displayNextBatch();}});
+tabs.forEach(tab=>{tab.addEventListener('click',()=>{tabs.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); applyFilters();});});
+searchInput.addEventListener('input',applyFilters);
 
-// Tabs
-tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        applyFilters();
-    });
-});
-
-// Search
-searchInput.addEventListener('input', applyFilters);
-
-// Initial fetch
-fetchNews();
-
-// Auto-refresh every 5 minutes
-setInterval(fetchNews, 300000);
+// Initial load
+fetchAllFeeds();
+setInterval(fetchAllFeeds,300000); // refresh every 5 mins
 </script>
 </body>
 </html>
