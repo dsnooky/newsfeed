@@ -9,6 +9,18 @@
     header {background:#007bff;color:white;padding:20px;text-align:center;}
     header h1 {margin:0;}
     main {padding:20px; max-width:1200px; margin:auto;}
+    .top-news {margin-bottom:30px;}
+    .top-news h2 {margin-bottom:15px;}
+    .top-news-container {display:flex; gap:20px; flex-wrap:wrap;}
+    .top-card {background:white; border-radius:10px; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.1); flex:1 1 calc(33% - 20px);}
+    .top-card img {width:100%; height:200px; object-fit:cover;}
+    .top-card-content {padding:15px;}
+    .top-card-content h3 {margin:0 0 10px; font-size:1.1rem;}
+    .search-bar {margin-bottom:20px; text-align:center;}
+    .search-bar input {width:80%; max-width:500px; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:1rem;}
+    .tabs {display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; justify-content:center;}
+    .tab {padding:10px 20px; background:#e0e0e0; border-radius:5px; cursor:pointer; transition:0.2s;}
+    .tab.active {background:#007bff; color:white;}
     .news-container {display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;}
     .news-card {background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); overflow:hidden; transition: transform 0.2s;}
     .news-card:hover {transform:scale(1.02);}
@@ -18,6 +30,9 @@
     .news-card-content p {font-size:0.8rem; color:#555;}
     .news-card-content a {display:inline-block; margin-top:10px; color:#007bff; text-decoration:none; font-weight:bold;}
     .news-card-content a:hover {text-decoration:underline;}
+    .load-more {text-align:center; margin:20px 0;}
+    .load-more button {padding:10px 20px; font-size:1rem; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer;}
+    .load-more button:hover {background:#0056b3;}
     footer {text-align:center; padding:15px; background:#007bff; color:white; margin-top:40px;}
 </style>
 </head>
@@ -25,12 +40,40 @@
 
 <header>
     <h1>Trending News Philippines</h1>
-    <p>Aggregated news from Inquirer, Philippine Star, GMA, and Rappler</p>
+    <p>Aggregated news from multiple sources</p>
 </header>
 
 <main>
+    <!-- Top Trending News -->
+    <div class="top-news" id="top-news">
+        <h2>Trending Top Stories</h2>
+        <div class="top-news-container" id="top-news-container">
+            <p>Loading top stories...</p>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search news...">
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-category="All">All</div>
+        <div class="tab" data-category="Politics">Politics</div>
+        <div class="tab" data-category="Entertainment">Entertainment</div>
+        <div class="tab" data-category="Sports">Sports</div>
+        <div class="tab" data-category="Technology">Technology</div>
+    </div>
+
+    <!-- News Grid -->
     <div class="news-container" id="news-container">
         <p>Loading news...</p>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="load-more">
+        <button id="load-more-btn">Load More</button>
     </div>
 </main>
 
@@ -39,7 +82,7 @@
 </footer>
 
 <script>
-// Philippine news RSS feeds
+// RSS feeds
 const rssFeeds = [
     {name: 'Inquirer', url: 'https://www.inquirer.net/feed'},
     {name: 'Philippine Star', url: 'https://www.philstar.com/rss'},
@@ -48,18 +91,37 @@ const rssFeeds = [
 ];
 
 const newsContainer = document.getElementById('news-container');
+const topNewsContainer = document.getElementById('top-news-container');
+const searchInput = document.getElementById('search-input');
+const tabs = document.querySelectorAll('.tab');
+const loadMoreBtn = document.getElementById('load-more-btn');
 
-// Helper: Extract first image from content
+let allArticles = [];
+let filteredArticles = [];
+let articlesToShow = 10;
+
+// Helper: extract image
 function extractImageFromContent(html) {
     if (!html) return null;
     const imgMatch = html.match(/<img.*?src="(.*?)"/);
     return imgMatch ? imgMatch[1] : null;
 }
 
-// Fetch news from all feeds
+// Helper: category detection
+function getCategory(title) {
+    const lower = title.toLowerCase();
+    if (lower.includes('politic')) return 'Politics';
+    if (lower.includes('entertainment') || lower.includes('showbiz') || lower.includes('celebrity')) return 'Entertainment';
+    if (lower.includes('sport') || lower.includes('basketball') || lower.includes('football')) return 'Sports';
+    if (lower.includes('tech') || lower.includes('technology') || lower.includes('gadgets')) return 'Technology';
+    return 'All';
+}
+
+// Fetch news
 async function fetchNews() {
-    newsContainer.innerHTML = '';
-    let allArticles = [];
+    allArticles = [];
+    topNewsContainer.innerHTML = '<p>Loading top stories...</p>';
+    newsContainer.innerHTML = '<p>Loading news...</p>';
 
     for (let feed of rssFeeds) {
         try {
@@ -67,13 +129,14 @@ async function fetchNews() {
             const response = await fetch(rss2jsonUrl);
             const data = await response.json();
             const articles = data.items.map(item => {
-                // Determine image
                 let image = item.enclosure?.link || item.thumbnail || extractImageFromContent(item.content) || 'https://via.placeholder.com/400x200';
+                let category = getCategory(item.title);
                 return {
                     title: item.title,
                     link: item.link,
                     pubDate: new Date(item.pubDate),
-                    image: image
+                    image: image,
+                    category: category
                 };
             });
             allArticles = allArticles.concat(articles);
@@ -82,18 +145,47 @@ async function fetchNews() {
         }
     }
 
-    // Sort all articles by date (latest first)
     allArticles.sort((a,b) => b.pubDate - a.pubDate);
 
-    // Display articles
-    allArticles.forEach(article => {
+    displayTopStories();
+    applyFilters();
+}
+
+// Display top 3 trending stories
+function displayTopStories() {
+    topNewsContainer.innerHTML = '';
+    const top3 = allArticles.slice(0,3);
+    top3.forEach(article => {
+        const card = document.createElement('div');
+        card.classList.add('top-card');
+        card.innerHTML = `
+            <img src="${article.image}" alt="News Image">
+            <div class="top-card-content">
+                <h3>${article.title}</h3>
+                <p>${article.pubDate.toLocaleString()} | ${article.category}</p>
+                <a href="${article.link}" target="_blank">Read More</a>
+            </div>
+        `;
+        topNewsContainer.appendChild(card);
+    });
+}
+
+// Display filtered articles with Load More
+function displayArticles() {
+    newsContainer.innerHTML = '';
+    const toDisplay = filteredArticles.slice(0, articlesToShow);
+    if (toDisplay.length === 0) {
+        newsContainer.innerHTML = '<p>No news found.</p>';
+        return;
+    }
+    toDisplay.forEach(article => {
         const card = document.createElement('div');
         card.classList.add('news-card');
         card.innerHTML = `
             <img src="${article.image}" alt="News Image">
             <div class="news-card-content">
                 <h3>${article.title}</h3>
-                <p>${article.pubDate.toLocaleString()}</p>
+                <p>${article.pubDate.toLocaleString()} | ${article.category}</p>
                 <a href="${article.link}" target="_blank">Read More</a>
             </div>
         `;
@@ -101,10 +193,40 @@ async function fetchNews() {
     });
 }
 
+// Apply category filter and search
+function applyFilters() {
+    const activeTab = document.querySelector('.tab.active').dataset.category;
+    const query = searchInput.value.toLowerCase();
+    filteredArticles = allArticles.filter(a => 
+        (activeTab === 'All' || a.category === activeTab) &&
+        (a.title.toLowerCase().includes(query))
+    );
+    articlesToShow = 10;
+    displayArticles();
+}
+
+// Tab click
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        applyFilters();
+    });
+});
+
+// Search input
+searchInput.addEventListener('input', () => applyFilters());
+
+// Load More button
+loadMoreBtn.addEventListener('click', () => {
+    articlesToShow += 10;
+    displayArticles();
+});
+
 // Initial fetch
 fetchNews();
 
-// Auto refresh every 5 minutes
+// Auto-refresh every 5 minutes
 setInterval(fetchNews, 300000);
 </script>
 
