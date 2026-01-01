@@ -17,20 +17,11 @@
   --border: #e0e0e0;
 }
 
-.dark {
-  --bg: #121212;
-  --card: #1e1e1e;
-  --text: #f1f1f1;
-  --muted: #94a3b8;
-  --border: #333;
-}
-
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background: var(--bg);
   color: var(--text);
-  transition: background .3s, color .3s;
 }
 
 header {
@@ -52,35 +43,18 @@ header p {
 }
 
 .controls {
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
   padding: 12px 10px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-  z-index: 10;
+  border-bottom: 1px solid var(--border);
 }
 
-select, input, button {
+select {
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--border);
   font-family: inherit;
   outline: none;
-}
-
-button {
-  background: var(--accent);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-button:hover {
-  opacity: 0.9;
 }
 
 .container {
@@ -166,11 +140,6 @@ button:hover {
     <option value="Entertainment">Entertainment</option>
     <option value="Health">Health</option>
   </select>
-
-  <input type="text" id="search" placeholder="Search news...">
-
-  <button onclick="toggleDark()">🌙 Dark Mode</button>
-  <button onclick="enableNotify()">🔔 Notifications</button>
 </div>
 
 <div class="container">
@@ -246,34 +215,10 @@ function backgroundAffiliate(affiliate, original) {
   window.location.href = original;
 }
 
-document.getElementById("search").addEventListener("input", e => {
-  const q = e.target.value.toLowerCase();
-  displayNews(articles.filter(a => a.title.toLowerCase().includes(q)));
-});
-
 document.getElementById("category").addEventListener("change", e => {
   const c = e.target.value;
   displayNews(c ? articles.filter(a => a.categories?.includes(c)) : articles);
 });
-
-function toggleDark() {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("dark", document.body.classList.contains("dark"));
-}
-
-if (localStorage.getItem("dark") === "true") document.body.classList.add("dark");
-
-function enableNotify() {
-  if (!("Notification" in window)) return alert("Not supported");
-  Notification.requestPermission().then(p => {
-    if (p === "granted") {
-      new Notification("Trending News Enabled", {
-        body: "Breaking and trending news alerts are on.",
-        icon: "https://cdn-icons-png.flaticon.com/512/21/21601.png"
-      });
-    }
-  });
-}
 
 fetchNews();
 setInterval(fetchNews, 60000);
