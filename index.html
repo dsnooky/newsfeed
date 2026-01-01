@@ -8,24 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg: #f4f6f8;
-  --card: #ffffff;
-  --text: #222;
-  --muted: #6b7280;
-  --accent: #0d6efd;
-  --border: #e0e0e0;
-}
-
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background: #f4f6f8;
+  color: #222;
 }
 
 header {
-  background: var(--accent);
+  background: #0d6efd;
   color: #fff;
   padding: 25px 20px;
   text-align: center;
@@ -42,21 +33,6 @@ header p {
   opacity: .9;
 }
 
-.controls {
-  padding: 12px 10px;
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px solid var(--border);
-}
-
-select {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  font-family: inherit;
-  outline: none;
-}
-
 .container {
   max-width: 900px;
   margin: auto;
@@ -70,10 +46,10 @@ select {
 }
 
 .card {
-  background: var(--card);
+  background: #ffffff;
   border-radius: 12px;
   padding: 15px 20px;
-  border: 1px solid var(--border);
+  border: 1px solid #e0e0e0;
   transition: transform .2s, box-shadow .2s;
   cursor: pointer;
 }
@@ -90,19 +66,19 @@ select {
 
 .card .summary {
   font-size: 14px;
-  color: var(--muted);
+  color: #6b7280;
   margin-bottom: 6px;
 }
 
 .card .date {
   font-size: 12px;
-  color: var(--muted);
+  color: #6b7280;
 }
 
 .card a {
   display: inline-block;
   margin-top: 8px;
-  color: var(--accent);
+  color: #0d6efd;
   font-weight: 600;
   text-decoration: none;
 }
@@ -131,17 +107,6 @@ select {
   <p>AI Summaries + Affiliate Background Clicks</p>
 </header>
 
-<div class="controls">
-  <select id="category">
-    <option value="">All</option>
-    <option value="Technology">Technology</option>
-    <option value="Business">Business</option>
-    <option value="Sports">Sports</option>
-    <option value="Entertainment">Entertainment</option>
-    <option value="Health">Health</option>
-  </select>
-</div>
-
 <div class="container">
   <div class="news-grid" id="news"></div>
 </div>
@@ -167,16 +132,11 @@ async function getSummary(title) {
 }
 
 const affiliateLinks = {
-  Technology: ["https://s.shopee.ph/6VHGj0pM5t"],
-  Business: ["https://s.shopee.ph/8fLlJ2rVsY"],
-  Sports: ["https://s.shopee.ph/1gC0yDhgQQ"],
-  Entertainment: ["https://s.shopee.ph/1VsalyQXxj"],
-  Health: ["https://s.shopee.ph/6fagvUj6oT"],
   Default: ["https://s.shopee.ph/AKTzIGLbyS"]
 };
 
-function getAffiliateLink(category) {
-  const list = affiliateLinks[category] || affiliateLinks.Default;
+function getAffiliateLink() {
+  const list = affiliateLinks.Default;
   return list[Math.floor(Math.random() * list.length)];
 }
 
@@ -188,8 +148,7 @@ async function displayNews(list) {
     const card = document.createElement("div");
     card.className = "card";
 
-    const category = (item.categories && item.categories[0]) || "Default";
-    const affiliate = getAffiliateLink(category);
+    const affiliate = getAffiliateLink();
     const original = item.link;
     const summary = await getSummary(item.title);
 
@@ -214,11 +173,6 @@ function backgroundAffiliate(affiliate, original) {
   document.body.appendChild(iframe);
   window.location.href = original;
 }
-
-document.getElementById("category").addEventListener("change", e => {
-  const c = e.target.value;
-  displayNews(c ? articles.filter(a => a.categories?.includes(c)) : articles);
-});
 
 fetchNews();
 setInterval(fetchNews, 60000);
