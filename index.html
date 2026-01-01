@@ -7,10 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<meta name="description" content="Trending news in Philippines with AI summaries and affiliate deals. Updated daily.">
-<meta property="og:title" content="Trending News Today">
-<meta property="og:description" content="Stay updated with trending news in Philippines and discover affiliate deals.">
-<meta property="og:type" content="website">
+<meta name="description" content="Trending news in Philippines with affiliate deals.">
 
 <style>
 body {
@@ -31,16 +28,15 @@ header {
 .logo {
   display: flex;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .logo img {
   width: 70px;
   height: 70px;
-  object-fit: cover;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.7);
-  background: #fff;
+  border: 3px solid rgba(255,255,255,.7);
+  object-fit: cover;
 }
 
 header h1 {
@@ -49,62 +45,51 @@ header h1 {
 }
 
 header p {
-  margin-top: 6px;
   font-size: 14px;
   opacity: .9;
 }
 
-/* CONTAINER */
+/* MAIN GRID */
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: auto;
-  padding: 20px 15px;
+  padding: 20px;
 }
 
-/* AFFILIATE BOX */
-.featured-affiliate {
-  background: #e7f1ff;
-  border-left: 5px solid #0d6efd;
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
 }
 
-.featured-affiliate a {
-  color: #0d6efd;
-  font-weight: 600;
-  text-decoration: none;
+/* SECTIONS */
+.box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
 }
 
-.featured-affiliate a:hover {
-  text-decoration: underline;
-}
-
-/* TOP 5 */
-.trending-top {
-  margin-bottom: 20px;
-}
-
-.trending-top h2 {
+.box h2 {
+  font-size: 16px;
   margin-bottom: 10px;
-  font-size: 18px;
 }
 
-.trending-top ul {
-  padding-left: 20px;
+/* LEFT: TOP 5 */
+.top5 ul {
+  padding-left: 18px;
   margin: 0;
 }
 
-.trending-top li {
-  margin-bottom: 6px;
+.top5 li {
   font-size: 14px;
+  margin-bottom: 8px;
   cursor: pointer;
   color: #0d6efd;
   text-decoration: underline;
 }
 
-/* NEWS */
+/* CENTER: NEWS */
 .news-grid {
   display: flex;
   flex-direction: column;
@@ -112,56 +97,71 @@ header p {
 }
 
 .card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 12px;
-  padding: 15px 20px;
+  padding: 15px;
   border: 1px solid #e0e0e0;
-  transition: transform .2s, box-shadow .2s;
   cursor: pointer;
+  transition: .2s;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,.08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,.08);
 }
 
 .card h3 {
   font-size: 16px;
-  margin: 0 0 6px;
+  margin-bottom: 5px;
 }
 
 .card .summary {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 6px;
 }
 
 .card .date {
   font-size: 12px;
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .card a {
-  display: inline-block;
-  margin-top: 8px;
-  color: #0d6efd;
+  font-size: 14px;
   font-weight: 600;
+  color: #0d6efd;
   text-decoration: none;
 }
 
-.card a:hover {
-  text-decoration: underline;
+/* RIGHT: AFFILIATE */
+.deal {
+  background: #e7f1ff;
+  border-left: 5px solid #0d6efd;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
+.deal a {
+  font-weight: 600;
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+/* HOT TAG */
 .hot {
-  display: inline-block;
   background: #ff3b30;
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;
   padding: 2px 6px;
   border-radius: 8px;
-  font-weight: 600;
-  margin-left: 8px;
+  margin-left: 6px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
@@ -170,98 +170,92 @@ header p {
 
 <header>
   <div class="logo">
-    <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=400&auto=format&fit=crop" alt="Trending News Logo">
+    <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=400&auto=format&fit=crop">
   </div>
   <h1>🔥 Trending News Today</h1>
-  <p>Read the top stories in the Philippines with concise summaries</p>
+  <p>Top Philippine news with quick summaries</p>
 </header>
 
 <div class="container">
+  <div class="grid">
 
-  <!-- Featured Affiliate -->
-  <div class="featured-affiliate">
-    🔥 Featured Deal: Check out today's top tech gadget!
-    <a href="https://s.shopee.ph/6VHGj0pM5t" target="_blank">Shop Now →</a>
+    <!-- LEFT COLUMN -->
+    <div class="box top5">
+      <h2>🔥 Top 5 Trending</h2>
+      <ul id="top5"></ul>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="news-grid box" id="news"></div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="box">
+      <h2>💰 Hot Deals</h2>
+      <div class="deal">
+        🔥 Must-Have Gadget Today  
+        <br><br>
+        <a href="https://s.shopee.ph/6VHGj0pM5t" target="_blank">
+          Shop Now →
+        </a>
+      </div>
+    </div>
+
   </div>
-
-  <!-- Top 5 -->
-  <div class="trending-top">
-    <h2>Top 5 Trending Today</h2>
-    <ul id="top5"></ul>
-  </div>
-
-  <!-- News Feed -->
-  <div class="news-grid" id="news"></div>
 </div>
 
 <script>
 const rss = "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en";
 const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
-let articles = [];
+
+const affiliateLinks = [
+  "https://s.shopee.ph/AKTzIGLbyS"
+];
+
+function getAffiliate() {
+  return affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
+}
 
 async function fetchNews() {
-  try {
-    const res = await fetch(api);
-    const data = await res.json();
-    articles = data.items || [];
-    displayTop5(articles.slice(0,5));
-    displayNews(articles);
-  } catch {
-    document.getElementById("news").innerHTML = "<p>Failed to load news.</p>";
-  }
+  const res = await fetch(api);
+  const data = await res.json();
+  const items = data.items || [];
+
+  renderTop5(items.slice(0,5));
+  renderNews(items);
 }
 
-function getSummary(title) {
-  return title.length > 100 ? title.substring(0, 100) + "..." : title;
-}
-
-/* Affiliate Links */
-const affiliateLinks = {
-  Default: ["https://s.shopee.ph/AKTzIGLbyS"]
-};
-
-function getAffiliateLink() {
-  return affiliateLinks.Default[Math.floor(Math.random() * affiliateLinks.Default.length)];
-}
-
-/* Top 5 */
-function displayTop5(list) {
-  const top5 = document.getElementById("top5");
-  top5.innerHTML = "";
+function renderTop5(list) {
+  const el = document.getElementById("top5");
+  el.innerHTML = "";
   list.forEach(item => {
     const li = document.createElement("li");
-    li.textContent = item.title.length > 60 ? item.title.substring(0, 60) + "..." : item.title;
-    li.onclick = () => backgroundAffiliate(getAffiliateLink(), item.link);
-    top5.appendChild(li);
+    li.textContent = item.title.slice(0, 60) + "...";
+    li.onclick = () => redirect(getAffiliate(), item.link);
+    el.appendChild(li);
   });
 }
 
-/* News Cards */
-async function displayNews(list) {
-  const news = document.getElementById("news");
-  news.innerHTML = "";
+function renderNews(list) {
+  const el = document.getElementById("news");
+  el.innerHTML = "<h2>📰 Latest News</h2>";
 
-  for (let item of list) {
+  list.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
 
-    const affiliate = getAffiliateLink();
-    const summary = getSummary(item.title);
-
     card.innerHTML = `
-      <h3>${item.title}${Math.random() < 0.3 ? '<span class="hot">🔥 Hot</span>' : ''}</h3>
-      <p class="summary">${summary}</p>
-      <p class="date">${item.pubDate ? item.pubDate.split(" ")[0] : ""}</p>
-      <a href="#" onclick="event.stopPropagation(); backgroundAffiliate('${affiliate}', '${item.link}')">Read more →</a>
+      <h3>${item.title}${Math.random()<0.3?'<span class="hot">HOT</span>':''}</h3>
+      <p class="summary">${item.title.slice(0,100)}...</p>
+      <p class="date">${item.pubDate?.split(" ")[0]}</p>
+      <a href="#">Read more →</a>
     `;
 
-    card.onclick = () => backgroundAffiliate(affiliate, item.link);
-    news.appendChild(card);
-  }
+    card.onclick = () => redirect(getAffiliate(), item.link);
+    el.appendChild(card);
+  });
 }
 
-/* Affiliate Redirect */
-function backgroundAffiliate(affiliate, original) {
+function redirect(affiliate, original) {
   const iframe = document.createElement("iframe");
   iframe.style.display = "none";
   iframe.src = affiliate;
