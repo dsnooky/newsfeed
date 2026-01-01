@@ -20,11 +20,27 @@ body {
   color: #222;
 }
 
+/* HEADER */
 header {
   background: #0d6efd;
   color: #fff;
-  padding: 25px 20px;
+  padding: 30px 20px;
   text-align: center;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.logo img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.7);
+  background: #fff;
 }
 
 header h1 {
@@ -33,17 +49,19 @@ header h1 {
 }
 
 header p {
-  margin-top: 5px;
+  margin-top: 6px;
   font-size: 14px;
   opacity: .9;
 }
 
+/* CONTAINER */
 .container {
   max-width: 900px;
   margin: auto;
   padding: 20px 15px;
 }
 
+/* AFFILIATE BOX */
 .featured-affiliate {
   background: #e7f1ff;
   border-left: 5px solid #0d6efd;
@@ -63,6 +81,7 @@ header p {
   text-decoration: underline;
 }
 
+/* TOP 5 */
 .trending-top {
   margin-bottom: 20px;
 }
@@ -85,6 +104,7 @@ header p {
   text-decoration: underline;
 }
 
+/* NEWS */
 .news-grid {
   display: flex;
   flex-direction: column;
@@ -149,25 +169,28 @@ header p {
 <body>
 
 <header>
+  <div class="logo">
+    <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=400&auto=format&fit=crop" alt="Trending News Logo">
+  </div>
   <h1>🔥 Trending News Today</h1>
-  <p>🔥 Read the top stories in the Philippines with concise summaries </p>
+  <p>Read the top stories in the Philippines with concise summaries</p>
 </header>
 
 <div class="container">
 
-  <!-- Featured Affiliate Box -->
+  <!-- Featured Affiliate -->
   <div class="featured-affiliate">
-    🔥 Featured Deal: Check out today's top tech gadget! 
+    🔥 Featured Deal: Check out today's top tech gadget!
     <a href="https://s.shopee.ph/6VHGj0pM5t" target="_blank">Shop Now →</a>
   </div>
 
-  <!-- Top 5 Trending Section -->
+  <!-- Top 5 -->
   <div class="trending-top">
     <h2>Top 5 Trending Today</h2>
     <ul id="top5"></ul>
   </div>
 
-  <!-- Main News Feed -->
+  <!-- News Feed -->
   <div class="news-grid" id="news"></div>
 </div>
 
@@ -188,36 +211,32 @@ async function fetchNews() {
   }
 }
 
-async function getSummary(title) {
+function getSummary(title) {
   return title.length > 100 ? title.substring(0, 100) + "..." : title;
 }
 
-// Affiliate Links
+/* Affiliate Links */
 const affiliateLinks = {
   Default: ["https://s.shopee.ph/AKTzIGLbyS"]
 };
 
 function getAffiliateLink() {
-  const list = affiliateLinks.Default;
-  return list[Math.floor(Math.random() * list.length)];
+  return affiliateLinks.Default[Math.floor(Math.random() * affiliateLinks.Default.length)];
 }
 
-// Display Top 5 Trending with affiliate click
+/* Top 5 */
 function displayTop5(list) {
   const top5 = document.getElementById("top5");
   top5.innerHTML = "";
   list.forEach(item => {
     const li = document.createElement("li");
     li.textContent = item.title.length > 60 ? item.title.substring(0, 60) + "..." : item.title;
-    li.onclick = () => {
-      const affiliate = getAffiliateLink();
-      backgroundAffiliate(affiliate, item.link);
-    };
+    li.onclick = () => backgroundAffiliate(getAffiliateLink(), item.link);
     top5.appendChild(li);
   });
 }
 
-// Display Full News Feed
+/* News Cards */
 async function displayNews(list) {
   const news = document.getElementById("news");
   news.innerHTML = "";
@@ -227,33 +246,29 @@ async function displayNews(list) {
     card.className = "card";
 
     const affiliate = getAffiliateLink();
-    const original = item.link;
-    const summary = await getSummary(item.title);
+    const summary = getSummary(item.title);
 
     card.innerHTML = `
       <h3>${item.title}${Math.random() < 0.3 ? '<span class="hot">🔥 Hot</span>' : ''}</h3>
       <p class="summary">${summary}</p>
       <p class="date">${item.pubDate ? item.pubDate.split(" ")[0] : ""}</p>
-      <a href="#" onclick="event.stopPropagation(); backgroundAffiliate('${affiliate}', '${original}')">Read more →</a>
+      <a href="#" onclick="event.stopPropagation(); backgroundAffiliate('${affiliate}', '${item.link}')">Read more →</a>
     `;
 
-    card.onclick = () => backgroundAffiliate(affiliate, original);
+    card.onclick = () => backgroundAffiliate(affiliate, item.link);
     news.appendChild(card);
   }
 }
 
-// Background affiliate click
+/* Affiliate Redirect */
 function backgroundAffiliate(affiliate, original) {
-  const iframe = document.createElement('iframe');
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "0";
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
   iframe.src = affiliate;
   document.body.appendChild(iframe);
   window.location.href = original;
 }
 
-// Fetch news and refresh every 10 minutes
 fetchNews();
 setInterval(fetchNews, 600000);
 </script>
