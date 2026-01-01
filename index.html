@@ -8,23 +8,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #222;
+  --accent: #0d6efd;
+}
+
+.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #f1f1f1;
+}
+
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #f4f6f8;
   margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
 header {
-  background: #0d6efd;
+  background: var(--accent);
   color: #fff;
-  padding: 20px;
+  padding: 15px;
   text-align: center;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 15px;
+}
+
+select, input, button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-family: inherit;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
 }
 
 .container {
   max-width: 1100px;
-  margin: 30px auto;
-  padding: 0 15px;
+  margin: auto;
+  padding: 10px;
 }
 
 .news-grid {
@@ -34,19 +69,123 @@ header {
 }
 
 .card {
-  background: #fff;
+  background: var(--card);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,.08);
-  transition: transform .2s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,.1);
 }
 
 .card img {
   width: 100%;
-  height: 170px;
+  height: 160px;
   object-fit: cover;
 }
+
+.card-content {
+  padding: 15px;
+}
+
+.card h3 {
+  font-size: 16px;
+}
+
+.card a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🔥 Trending News Today</h1>
+  <p>Auto-updated • Free • Live</p>
+</header>
+
+<div class="controls">
+  <select id="category">
+    <option value="">All</option>
+    <option value="Technology">Technology</option>
+    <option value="Business">Business</option>
+    <option value="Sports">Sports</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Health">Health</option>
+  </select>
+
+  <input type="text" id="search" placeholder="Search news...">
+
+  <button onclick="toggleDark()">🌙 Dark Mode</button>
+  <button onclick="enableNotify()">🔔 Notifications</button>
+</div>
+
+<div class="container">
+  <div class="news-grid" id="news"></div>
+</div>
+
+<script>
+const rss = "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en";
+const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
+let articles = [];
+
+fetch(api)
+.then(res => res.json())
+.then(data => {
+  articles = data.items;
+  displayNews(articles);
+});
+
+function displayNews(list) {
+  const news = document.getElementById("news");
+  news.innerHTML = "";
+
+  list.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${item.thumbnail || 'https://source.unsplash.com/600x400/?news'}">
+      <div class="card-content">
+        <h3>${item.title}</h3>
+        <p>${item.pubDate.split(" ")[0]}</p>
+        <a href="${item.link}" target="_blank">Read more →</a>
+      </div>`;
+    news.appendChild(card);
+  });
+}
+
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  displayNews(articles.filter(a => a.title.toLowerCase().includes(q)));
+});
+
+document.getElementById("category").addEventListener("change", e => {
+  const c = e.target.value;
+  displayNews(c ? articles.filter(a => a.categories.includes(c)) : articles);
+});
+
+function toggleDark() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("dark", document.body.classList.contains("dark"));
+}
+
+if (localStorage.getItem("dark") === "true") {
+  document.body.classList.add("dark");
+}
+
+function enableNotify() {
+  if (!("Notification" in window)) return alert("Not supported");
+
+  Notification.requestPermission().then(p => {
+    if (p === "granted") {
+      new Notification("Trending News Enabled", {
+        body: "You will receive breaking news alerts.",
+        icon: "https://cdn-icons-png.flaticon.com/512/21/21601.png"
+      });
+    }
+  });
+}
+</script>
+
+</body>
+</html>
