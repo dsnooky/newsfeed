@@ -136,6 +136,17 @@ fetch(api)
   displayNews(articles);
 });
 
+function extractImage(item) {
+  if (item.thumbnail) return item.thumbnail;
+
+  if (item.content) {
+    const match = item.content.match(/<img[^>]+src="([^">]+)"/);
+    if (match && match[1]) return match[1];
+  }
+
+  return "https://source.unsplash.com/600x400/?news,headline";
+}
+
 function displayNews(list) {
   const news = document.getElementById("news");
   news.innerHTML = "";
@@ -143,16 +154,22 @@ function displayNews(list) {
   list.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
+
+    const imgSrc = extractImage(item);
+
     card.innerHTML = `
-      <img src="${item.thumbnail || 'https://source.unsplash.com/600x400/?news'}">
+      <img src="${imgSrc}" onerror="this.src='https://source.unsplash.com/600x400/?news'">
       <div class="card-content">
         <h3>${item.title}</h3>
         <p>${item.pubDate.split(" ")[0]}</p>
         <a href="${item.link}" target="_blank">Read more →</a>
-      </div>`;
+      </div>
+    `;
+
     news.appendChild(card);
   });
 }
+</script>
 
 document.getElementById("search").addEventListener("input", e => {
   const q = e.target.value.toLowerCase();
