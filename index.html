@@ -10,38 +10,44 @@
 <meta name="description" content="Trending news in Philippines with affiliate deals.">
 
 <style>
+/* ===== BACKGROUND ===== */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #f4f6f8;
   color: #222;
+  background:
+    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
+    url("https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1600&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 /* HEADER */
 header {
-  background: #0d6efd;
-  color: #fff;
-  padding: 30px 20px;
   text-align: center;
+  padding: 35px 20px;
+  color: #fff;
 }
 
 .logo {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .logo img {
-  width: 70px;
-  height: 70px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.7);
+  border: 3px solid rgba(255,255,255,.8);
   object-fit: cover;
+  background: #fff;
 }
 
 header h1 {
   margin: 0;
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: clamp(26px, 4vw, 38px);
 }
 
 header p {
@@ -49,25 +55,27 @@ header p {
   opacity: .9;
 }
 
-/* MAIN GRID */
+/* MAIN CONTAINER */
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
 
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
 }
 
-/* SECTIONS */
+/* GLASS BOX */
 .box {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px;
-  border: 1px solid #e0e0e0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.4);
 }
 
 .box h2 {
@@ -75,7 +83,7 @@ header p {
   margin-bottom: 10px;
 }
 
-/* LEFT: TOP 5 */
+/* LEFT */
 .top5 ul {
   padding-left: 18px;
   margin: 0;
@@ -89,7 +97,7 @@ header p {
   text-decoration: underline;
 }
 
-/* CENTER: NEWS */
+/* CENTER NEWS */
 .news-grid {
   display: flex;
   flex-direction: column;
@@ -106,8 +114,8 @@ header p {
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0,0,0,.08);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,.12);
 }
 
 .card h3 {
@@ -132,12 +140,12 @@ header p {
   text-decoration: none;
 }
 
-/* RIGHT: AFFILIATE */
+/* RIGHT DEAL */
 .deal {
   background: #e7f1ff;
   border-left: 5px solid #0d6efd;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
 }
 
@@ -147,7 +155,7 @@ header p {
   text-decoration: none;
 }
 
-/* HOT TAG */
+/* HOT */
 .hot {
   background: #ff3b30;
   color: #fff;
@@ -157,7 +165,7 @@ header p {
   margin-left: 6px;
 }
 
-/* RESPONSIVE */
+/* MOBILE */
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
@@ -179,20 +187,22 @@ header p {
 <div class="container">
   <div class="grid">
 
-    <!-- LEFT COLUMN -->
+    <!-- LEFT -->
     <div class="box top5">
       <h2>🔥 Top 5 Trending</h2>
       <ul id="top5"></ul>
     </div>
 
-    <!-- CENTER COLUMN -->
-    <div class="news-grid box" id="news"></div>
+    <!-- CENTER -->
+    <div class="box news-grid" id="news">
+      <h2>📰 Latest News</h2>
+    </div>
 
-    <!-- RIGHT COLUMN -->
+    <!-- RIGHT -->
     <div class="box">
       <h2>💰 Hot Deals</h2>
       <div class="deal">
-        🔥 Must-Have Gadget Today  
+        🔥 Trending Gadget Today  
         <br><br>
         <a href="https://s.shopee.ph/6VHGj0pM5t" target="_blank">
           Shop Now →
@@ -206,10 +216,7 @@ header p {
 <script>
 const rss = "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en";
 const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
-
-const affiliateLinks = [
-  "https://s.shopee.ph/AKTzIGLbyS"
-];
+const affiliateLinks = ["https://s.shopee.ph/AKTzIGLbyS"];
 
 function getAffiliate() {
   return affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
@@ -229,7 +236,7 @@ function renderTop5(list) {
   el.innerHTML = "";
   list.forEach(item => {
     const li = document.createElement("li");
-    li.textContent = item.title.slice(0, 60) + "...";
+    li.textContent = item.title.slice(0,60) + "...";
     li.onclick = () => redirect(getAffiliate(), item.link);
     el.appendChild(li);
   });
@@ -242,14 +249,12 @@ function renderNews(list) {
   list.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
-
     card.innerHTML = `
       <h3>${item.title}${Math.random()<0.3?'<span class="hot">HOT</span>':''}</h3>
       <p class="summary">${item.title.slice(0,100)}...</p>
       <p class="date">${item.pubDate?.split(" ")[0]}</p>
       <a href="#">Read more →</a>
     `;
-
     card.onclick = () => redirect(getAffiliate(), item.link);
     el.appendChild(card);
   });
