@@ -2,82 +2,97 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Trending Topics News | PH & Global</title>
-
-<meta name="description" content="Live trending topics from the Philippines and worldwide. Updated automatically every 30 minutes.">
-<meta name="keywords" content="trending topics philippines, viral news, trending issues, breaking topics">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending News</title>
 
-<!-- Open Graph -->
-<meta property="og:title" content="Trending Topics News">
-<meta property="og:description" content="Auto-updating trending topics from PH and worldwide">
-<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial, sans-serif;
- background:#f3f5f9;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-header{
- background:#0d47a1;
- color:#fff;
- padding:25px;
- text-align:center;
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f4f6f8;
 }
 
-.search-box{
- max-width:600px;
- margin:15px auto 0;
+header {
+  background: #0a0a0a;
+  color: #fff;
+  padding: 1.2rem;
+  text-align: center;
 }
 
-.search-box input{
- width:100%;
- padding:14px;
- border:none;
- border-radius:30px;
- outline:none;
- font-size:15px;
+header h1 {
+  font-size: 1.8rem;
 }
 
-main{
- max-width:900px;
- margin:auto;
- padding:20px;
+.news-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
-.topic{
- background:#fff;
- border-radius:12px;
- padding:18px;
- margin-bottom:12px;
- box-shadow:0 4px 10px rgba(0,0,0,.08);
- transition:.2s;
- cursor:pointer;
+.news-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
 }
 
-.topic:hover{
- transform:translateX(6px);
- background:#eef3ff;
+.news-card:hover {
+  transform: translateY(-5px);
 }
 
-.topic h3{
- margin:0 0 6px;
- font-size:18px;
+.news-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
 }
 
-.topic span{
- font-size:13px;
- color:#666;
+.news-content {
+  padding: 1rem;
+  flex: 1;
 }
 
-footer{
- background:#eaeaea;
- text-align:center;
- padding:15px;
- font-size:14px;
+.news-content h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.news-content p {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.news-footer {
+  padding: 0.8rem 1rem;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.news-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 3rem;
 }
 </style>
 </head>
@@ -85,78 +100,54 @@ footer{
 <body>
 
 <header>
- <h1>🔥 Trending Topics News</h1>
- <p>Philippines & Global • Updated every 30 minutes</p>
-
- <div class="search-box">
-  <input type="text" id="search" placeholder="Search trending topics...">
- </div>
+  <h1>🔥 Trending News Today</h1>
 </header>
 
-<main id="topics"></main>
-
-<footer>
- © 2026 Trending Topics News | Frontend-Only
-</footer>
+<div id="news" class="news-container">
+  <div class="loading">Loading trending news...</div>
+</div>
 
 <script>
-const PH_TRENDS = "https://trends.google.com/trends/trendingsearches/daily?geo=PH";
-const GLOBAL_TRENDS = "https://trends.google.com/trends/trendingsearches/daily";
+const API_KEY = "YOUR_API_KEY_HERE";
+const API_URL = `https://newsapi.org/v2/top-headlines?country=us&pageSize=12&apiKey=${API_KEY}`;
 
-let allTopics = [];
-
-// Google Trends requires text parsing (frontend-safe)
-async function fetchTrends(url){
- const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url));
- const text = await res.text();
-
- const matches = [...text.matchAll(/<title>(.*?)<\/title>/g)]
-   .map(m => m[1])
-   .filter(t => !t.includes("Trending Searches"));
-
- return matches.slice(0,15);
+async function loadNews() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    displayNews(data.articles);
+  } catch (error) {
+    document.getElementById("news").innerHTML = "Failed to load news.";
+  }
 }
 
-async function loadTrends(){
- allTopics = [];
- document.getElementById("topics").innerHTML = "Loading trending topics...";
+function displayNews(articles) {
+  const container = document.getElementById("news");
+  container.innerHTML = "";
 
- const ph = await fetchTrends(PH_TRENDS);
- const global = await fetchTrends(GLOBAL_TRENDS);
+  articles.forEach(article => {
+    if (!article.urlToImage) return;
 
- ph.forEach(t => allTopics.push({ title: t, region: "Philippines" }));
- global.forEach(t => allTopics.push({ title: t, region: "Global" }));
+    const card = document.createElement("div");
+    card.className = "news-card";
 
- render(allTopics);
+    card.innerHTML = `
+      <img src="${article.urlToImage}" alt="">
+      <div class="news-content">
+        <h3>${article.title}</h3>
+        <p>${article.description || ""}</p>
+      </div>
+      <div class="news-footer">
+        <span>${article.source.name}</span>
+        <a href="${article.url}" target="_blank">Read more</a>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
 }
 
-function render(list){
- const container = document.getElementById("topics");
- container.innerHTML = "";
-
- list.forEach(t=>{
-  container.innerHTML += `
-   <div class="topic" onclick="openNews('${encodeURIComponent(t.title)}')">
-    <h3>${t.title}</h3>
-    <span>${t.region} • Trending now</span>
-   </div>
-  `;
- });
-}
-
-function openNews(topic){
- window.open("https://news.google.com/search?q=" + topic, "_blank");
-}
-
-document.getElementById("search").addEventListener("input", e=>{
- const q = e.target.value.toLowerCase();
- render(allTopics.filter(t => t.title.toLowerCase().includes(q)));
-});
-
-// Auto refresh every 30 minutes
-setInterval(loadTrends, 1800000);
-
-loadTrends();
+loadNews();
 </script>
 
 </body>
