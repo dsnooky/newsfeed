@@ -3,218 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trending News Philippines</title>
+<title>Trending Entertainment News Philippines</title>
 <style>
-body {font-family: Arial,sans-serif; margin:0; background:#f4f4f4; color:#333;}
-header {background:#007bff;color:white;padding:20px;text-align:center;}
-header h1 {margin:0;font-size:1.8rem;}
-main {padding:15px; max-width:1200px; margin:auto;}
-h2 {margin-bottom:10px;}
-
-/* Top Stories & Entertainment */
-.top-news-container, .top-ent-container {display:flex; gap:15px; flex-wrap:wrap; opacity:0; transform:translateY(20px); animation:fadeSlide 0.8s forwards;}
-.top-card {background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); flex:1 1 calc(33% - 15px); transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s; opacity:0; animation:fadeIn 0.5s forwards;}
-.top-card img {width:100%; height:180px; object-fit:cover;}
-.top-card-content {padding:10px;}
-.top-card-content h3 {margin:0 0 8px; font-size:1rem;}
-.top-card-content p {font-size:0.75rem; color:#555;}
-.top-card-content a {display:inline-block; margin-top:5px; color:#007bff; text-decoration:none; font-weight:bold;}
-.top-card-content a:hover {text-decoration:underline;}
-.top-card:hover {transform:translateY(-5px); box-shadow:0 5px 20px rgba(0,0,0,0.15);}
-
-.search-bar {margin:15px 0; text-align:center;}
-.search-bar input {width:90%; max-width:500px; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:1rem;}
-
-.tabs {display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; justify-content:center;}
-.tab {padding:8px 15px; background:#e0e0e0; border-radius:5px; cursor:pointer; transition:0.3s;}
-.tab.active {background:#007bff; color:white;}
-
-.news-container {display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:15px; position:relative;}
-.news-card {background:white; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.1); overflow:hidden; transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s; opacity:0;}
-.news-card img {width:100%; height:150px; object-fit:cover;}
-.news-card-content {padding:10px;}
-.news-card-content h3 {margin:0 0 8px; font-size:1rem;}
-.news-card-content p {font-size:0.75rem; color:#555;}
-.news-card-content a {display:inline-block; margin-top:5px; color:#007bff; text-decoration:none; font-weight:bold;}
-.news-card-content a:hover {text-decoration:underline;}
-.news-card:hover {transform:translateY(-5px); box-shadow:0 5px 20px rgba(0,0,0,0.15);}
-
-footer {text-align:center; padding:15px; background:#007bff; color:white; margin-top:30px; font-size:0.85rem;}
-
-/* Animations */
-@keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
-@keyframes fadeSlide {from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
-.fadeOut {opacity:0; transform:translateY(-20px); transition:opacity 0.3s, transform 0.3s;}
-.fadeInCard {opacity:1; transform:translateY(0); transition:opacity 0.5s, transform 0.5s;}
-
-@media(max-width:768px){
-    .top-card {flex:1 1 48%;}
-    .news-card img {height:130px;}
-}
-@media(max-width:480px){
-    .top-card {flex:1 1 100%;}
-    .news-card img {height:120px;}
-}
+body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; }
+header { background:#ff2d55; color:white; text-align:center; padding:20px; }
+h1 { margin:0; }
+.news-container { display:flex; flex-wrap:wrap; justify-content:center; margin:20px; }
+.news-card { background:white; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); margin:10px; width:300px; overflow:hidden; transition: transform 0.2s; }
+.news-card:hover { transform: translateY(-5px); }
+.news-card img { width:100%; height:180px; object-fit:cover; }
+.news-card h3 { margin:10px; font-size:1.1em; }
+.news-card p { margin:10px; font-size:0.9em; color:#555; }
+.news-card a { text-decoration:none; color:#ff2d55; font-weight:bold; margin:10px; display:inline-block; }
+footer { background:#222; color:white; text-align:center; padding:15px; margin-top:20px; }
 </style>
 </head>
 <body>
 
 <header>
-<h1>Trending News Philippines</h1>
-<p>Aggregated news from multiple sources</p>
+  <h1>Trending Entertainment News Philippines</h1>
 </header>
 
-<main>
-<div class="top-news" id="top-news">
-<h2>Trending Top Stories</h2>
-<div class="top-news-container" id="top-news-container"><p>Loading top stories...</p></div>
-</div>
-
-<div class="top-entertainment" id="top-entertainment">
-<h2>Top Entertainment News</h2>
-<div class="top-ent-container" id="top-ent-container"><p>Loading entertainment news...</p></div>
-</div>
-
-<div class="search-bar">
-<input type="text" id="search-input" placeholder="Search news...">
-</div>
-
-<div class="tabs" id="tabs">
-<div class="tab active" data-category="All">All</div>
-<div class="tab" data-category="Politics">Politics</div>
-<div class="tab" data-category="Entertainment">Entertainment</div>
-<div class="tab" data-category="Sports">Sports</div>
-<div class="tab" data-category="Technology">Technology</div>
-</div>
-
 <div class="news-container" id="news-container">
-<p>Loading news...</p>
+  <!-- News articles will appear here -->
 </div>
-</main>
 
 <footer>
-&copy; 2026 Trending News PH
+  &copy; 2026 Entertainment News PH | Aggregated from ABS-CBN, GMA, Rappler, Inquirer
 </footer>
 
 <script>
-// List of RSS feeds
+// RSS feeds to aggregate
 const rssFeeds = [
-'https://www.inquirer.net/feed',
-'https://www.philstar.com/rss',
-'https://www.gmanetwork.com/news/rss/',
-'https://www.rappler.com/rss',
-'https://www.pep.ph/rss/news/1' // entertainment
+  'https://news.abs-cbn.com/entertainment/rss',
+  'https://www.gmanetwork.com/entertainment/showbiznews/rss',
+  'https://entertainment.inquirer.net/feed',
+  'https://www.rappler.com/section/entertainment/feed/'
 ];
 
-const newsContainer = document.getElementById('news-container');
-const topNewsContainer = document.getElementById('top-news-container');
-const topEntContainer = document.getElementById('top-ent-container');
-const searchInput = document.getElementById('search-input');
-const tabs = document.querySelectorAll('.tab');
-
-let allArticles = [], filteredArticles = [], articlesLoaded=0, articlesPerBatch=10;
-
-// Helper: extract image from content
-function extractImageFromContent(html){
-    if(!html) return null;
-    const match = html.match(/<img.*?src="(.*?)"/);
-    return match ? match[1] : null;
+// Use rss2json.com to convert RSS to JSON
+async function fetchFeed(url) {
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+  const res = await fetch(apiUrl);
+  const data = await res.json();
+  return data.items;
 }
 
-// Detect category
-function getCategory(title){
-    const t = title.toLowerCase();
-    if(t.includes('politic')) return 'Politics';
-    if(t.includes('entertainment') || t.includes('showbiz') || t.includes('celebrity')) return 'Entertainment';
-    if(t.includes('sport') || t.includes('basketball') || t.includes('football')) return 'Sports';
-    if(t.includes('tech') || t.includes('technology') || t.includes('gadgets')) return 'Technology';
-    return 'All';
-}
-
-// Fetch RSS feed via AllOrigins proxy
-async function fetchFeed(url){
-    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxy);
-    const data = await res.json();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents,"text/xml");
-    return Array.from(xml.querySelectorAll("item")).map(item=>{
-        const title = item.querySelector("title")?.textContent || '';
-        const link = item.querySelector("link")?.textContent || '#';
-        const pubDate = new Date(item.querySelector("pubDate")?.textContent || new Date());
-        const description = item.querySelector("description")?.textContent || '';
-        const image = extractImageFromContent(description) || '';
-        if(!image) return null; // skip if no image
-        return {title,link,pubDate,image,category:getCategory(title)};
-    }).filter(Boolean);
-}
-
-// Fetch all feeds
-async function fetchAllFeeds(){
-    allArticles = [];
-    for(const url of rssFeeds){
-        try{
-            const articles = await fetchFeed(url);
-            allArticles.push(...articles);
-        }catch(e){console.error('Error fetching',url,e);}
+// Load all feeds and merge
+async function loadNews() {
+  try {
+    const allNews = [];
+    for (const feed of rssFeeds) {
+      const items = await fetchFeed(feed);
+      allNews.push(...items);
     }
-    allArticles.sort((a,b)=>b.pubDate-a.pubDate);
-    displayTopStories();
-    displayTopEntertainment();
-    applyFilters();
-}
 
-// Display top 3 stories
-function displayTopStories(){
-    topNewsContainer.innerHTML='';
-    allArticles.slice(0,3).forEach((a,i)=>{
-        const card=document.createElement('div'); card.classList.add('top-card'); card.style.animationDelay=`${i*0.1}s`;
-        card.innerHTML=`<img src="${a.image}" alt="News Image" loading="lazy"><div class="top-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()} | ${a.category}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
-        topNewsContainer.appendChild(card);
+    // Sort by publication date (newest first)
+    allNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+    const newsContainer = document.getElementById('news-container');
+    newsContainer.innerHTML = '';
+
+    allNews.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'news-card';
+      card.innerHTML = `
+        <img src="${item.thumbnail || 'https://via.placeholder.com/300x180'}" alt="${item.title}">
+        <h3>${item.title}</h3>
+        <p>${new Date(item.pubDate).toLocaleDateString()}</p>
+        <a href="${item.link}" target="_blank">Read More</a>
+      `;
+      newsContainer.appendChild(card);
     });
-}
 
-// Display top 3 entertainment
-function displayTopEntertainment(){
-    topEntContainer.innerHTML='';
-    allArticles.filter(a=>a.category==='Entertainment').slice(0,3).forEach((a,i)=>{
-        const card=document.createElement('div'); card.classList.add('top-card'); card.style.animationDelay=`${i*0.1}s`;
-        card.innerHTML=`<img src="${a.image}" alt="Entertainment Image" loading="lazy"><div class="top-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
-        topEntContainer.appendChild(card);
-    });
+  } catch (err) {
+    console.error('Error loading news:', err);
+  }
 }
-
-// Display next batch (infinite scroll)
-function displayNextBatch(){
-    const batch = filteredArticles.slice(articlesLoaded, articlesLoaded+articlesPerBatch);
-    batch.forEach((a,i)=>{
-        const card=document.createElement('div'); card.classList.add('news-card'); card.style.animationDelay=`${i*0.05}s`;
-        card.innerHTML=`<img src="${a.image}" alt="News Image" loading="lazy"><div class="news-card-content"><h3>${a.title}</h3><p>${a.pubDate.toLocaleString()} | ${a.category}</p><a href="${a.link}" target="_blank">Read More</a></div>`;
-        newsContainer.appendChild(card);
-        setTimeout(()=>{card.classList.add('fadeInCard');},50);
-    });
-    articlesLoaded += batch.length;
-}
-
-// Apply filters & animate tab switching
-function applyFilters(){
-    const activeTab = document.querySelector('.tab.active').dataset.category;
-    const query = searchInput.value.toLowerCase();
-    document.querySelectorAll('.news-card').forEach(c=>c.classList.add('fadeOut'));
-    setTimeout(()=>{
-        filteredArticles = allArticles.filter(a=>(activeTab==='All'||a.category===activeTab)&&a.title.toLowerCase().includes(query));
-        newsContainer.innerHTML=''; articlesLoaded=0; displayNextBatch();
-    },300);
-}
-
-// Events
-window.addEventListener('scroll',()=>{if(window.innerHeight+window.scrollY>=document.body.offsetHeight-500){if(articlesLoaded<filteredArticles.length) displayNextBatch();}});
-tabs.forEach(tab=>{tab.addEventListener('click',()=>{tabs.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); applyFilters();});});
-searchInput.addEventListener('input',applyFilters);
 
 // Initial load
-fetchAllFeeds();
-setInterval(fetchAllFeeds,300000); // refresh every 5 mins
+loadNews();
+
+// Refresh every 30 minutes
+setInterval(loadNews, 30 * 60 * 1000);
 </script>
+
 </body>
 </html>
