@@ -1,1 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending News Today</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ================= ROOT THEME ================= */
+:root {
+  --bg: #f2f5f9;
+  --card: rgba(255,255,255,0.85);
+  --text: #1e1e1e;
+  --muted: #6b7280;
+  --accent: linear-gradient(135deg, #0d6efd, #2563eb);
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: rgba(30,41,59,0.85);
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: rgba(255,255,255,0.08);
+  --shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+
+/* ================= GLOBAL ================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #eaf0ff, var(--bg));
+  color: var(--text);
+  transition: background .3s, color .3s;
+}
+
+/* ================= HEADER ================= */
+header {
+  background: var(--accent);
+  color: #fff;
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 36px);
+  letter-spacing: .5px;
+}
+
+header p {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: .9;
+}
+
+/* ================= CONTROLS ================= */
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,.6);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 15px;
+}
+
+.dark .controls {
+  background: rgba(15,23,42,.6);
+}
+
+select, input, button {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: .2s;
+}
+
+input {
+  min-width: 200px;
+}
+
+select:hover, input:focus {
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+}
+
+/* ================= FEATURED ================= */
+.featured-news {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 15px;
+  scroll-snap-type: x mandatory;
+}
+
+.featured-news .banner {
+  flex: 0 0 300px;
+  scroll-snap-align: start;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  position: relative;
+  cursor: pointer;
+  transition: transform .3s;
+}
+
+.featured-news .banner:hover {
+  transform: translateY(-4px);
+}
+
+.featured-news img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.featured-news .banner h3 {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,.5);
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+/* ================= LAYOUT ================= */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px 15px;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* ================= CARD ================= */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: transform .25s ease, box-shadow .25s ease;
+  position: relative;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* ================= CARD CONTENT ================= */
+.card-content {
+  padding: 18px;
+}
+
+.card h3 {
+  font-size: 16px;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.card .summary {
+  font-size: 14px;
+  margin-top: 10px;
+  color: var(--text);
+  opacity: .9;
+}
+
+.card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+  transition: .2s;
+}
+
+.card a:hover {
+  gap: 10px;
+  text-decoration: underline;
+}
+
+/* ================= HOT BADGE ================= */
+.hot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 600px) {
+  header {
+    padding: 24px 15px;
+  }
+  .controls {
+    padding: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🔥 Trending News Today</h1>
+  <p>AI Summaries + Affiliate Background Clicks</p>
+</header>
+
+<div class="controls">
+  <select id="category">
+    <option value="">All</option>
+    <option value="Technology">Technology</option>
+    <option value="Business">Business</option>
+    <option value="Sports">Sports</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Health">Health</option>
+  </select>
+
+  <input type="text" id="search" placeholder="Search news...">
+
+  <button onclick="toggleDark()">🌙 Dark Mode</button>
+  <button onclick="enableNotify()">🔔 Notifications</button>
+</div>
+
+<!-- FEATURED TRENDING -->
+<div class="featured-news" id="featured"></div>
+
+<div class="container">
+  <div class="news-grid" id="news"></div>
+</div>
+
+<script>
+/* ------------------ Fetch news ------------------ */
+const rss = "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en";
+const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
+let articles = [];
+
+async function fetchNews() {
+  try {
+    const res = await fetch(api);
+    const data = await res.json();
+    articles = data.items || [];
+    displayNews(articles);
+    displayFeatured(articles);
+  } catch {
+    document.getElementById("news").innerHTML = "<p>Failed to load news.</p>";
+  }
+}
+
+/* ------------------ Extract images ------------------ */
+function extractImage(item) {
+  if (item.thumbnail) return item.thumbnail;
+  if (item.content) {
+    const match = item.content.match(/<img[^>]+src="([^">]+)"/);
+    if (match && match[1]) return match[1];
+  }
+  return "https://source.unsplash.com/600x400/?news,headline";
+}
+
+/* ------------------ Affiliate links ------------------ */
+const affiliateLinks = {
+  Technology: ["https://s.shopee.ph/6VHGj0pM5t"],
+  Business: ["https://s.shopee.ph/8fLlJ2rVsY"],
+  Sports: ["https://s.shopee.ph/1gC0yDhgQQ"],
+  Entertainment: ["https://s.shopee.ph/1VsalyQXxj"],
+  Health: ["https://s.shopee.ph/6fagvUj6oT"],
+  Default: ["https://s.shopee.ph/AKTzIGLbyS"]
+};
+
+function getAffiliateLink(category) {
+  const list = affiliateLinks[category] || affiliateLinks.Default;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+/* ------------------ AI Summary (placeholder) ------------------ */
+async function getSummary(title) {
+  return title.length > 80 ? title.substring(0, 80) + "..." : title;
+}
+
+/* ------------------ Display Featured ------------------ */
+function displayFeatured(list) {
+  const featured = document.getElementById("featured");
+  featured.innerHTML = "";
+  list.slice(0,5).forEach(item => {
+    const div = document.createElement("div");
+    div.className = "banner";
+    div.innerHTML = `
+      <img src="${extractImage(item)}" onerror="this.src='https://source.unsplash.com/600x400/?news'">
+      <h3>${item.title}</h3>
+    `;
+    div.onclick = () => backgroundAffiliate(getAffiliateLink(item.categories?.[0] || "Default"), item.link);
+    featured.appendChild(div);
+  });
+}
+
+/* ------------------ Display News ------------------ */
+async function displayNews(list) {
+  const news = document.getElementById("news");
+  news.innerHTML = "";
+
+  for (let item of list) {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const imgSrc = extractImage(item);
+    const category = (item.categories && item.categories[0]) || "Default";
+    const affiliate = getAffiliateLink(category);
+    const original = item.link;
+    const summary = await getSummary(item.title);
+
+    card.innerHTML = `
+      <img src="${imgSrc}" onerror="this.src='https://source.unsplash.com/600x400/?news'">
+      <div class="card-content">
+        <h3>${item.title}</h3>
+        <p class="summary">${summary}</p>
+        <p>${item.pubDate ? item.pubDate.split(" ")[0] : ""}</p>
+        <a href="#" onclick="event.stopPropagation(); backgroundAffiliate('${affiliate}', '${original}')">Read more →</a>
+      </div>
+    `;
+
+    // HOT badge for trending
+    if (Math.random() < 0.3) {
+      const hot = document.createElement("span");
+      hot.className = "hot";
+      hot.textContent = "🔥 Hot";
+      card.appendChild(hot);
+    }
+
+    card.onclick = () => backgroundAffiliate(affiliate, original);
+
+    news.appendChild(card);
+  }
+}
+
+/* ------------------ Background affiliate click ------------------ */
+function backgroundAffiliate(affiliate, original) {
+  const iframe = document.createElement('iframe');
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  iframe.src = affiliate;
+  document.body.appendChild(iframe);
+  window.location.href = original;
+}
+
+/* ------------------ Search & Filter ------------------ */
+document.getElementById("search").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  displayNews(articles.filter(a => a.title.toLowerCase().includes(q)));
+});
+
+document.getElementById("category").addEventListener("change", e => {
+  const c = e.target.value;
+  displayNews(c ? articles.filter(a => a.categories?.includes(c)) : articles);
+});
+
+/* ------------------ Dark mode ------------------ */
+function toggleDark() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("dark", document.body.classList.contains("dark"));
+}
+if (localStorage.getItem("dark") === "true") document.body.classList.add("dark");
+
+/* ------------------ Notifications ------------------ */
+function enableNotify() {
+  if (!("Notification" in window)) return alert("Not supported");
+  Notification.requestPermission().then(p => {
+    if (p === "granted") {
+      new Notification("Trending News Enabled", {
+        body: "Breaking and trending news alerts are on.",
+        icon: "https://cdn-icons-png.flaticon.com/512/21/21601.png"
+      });
+    }
+  });
+}
+
+/* ------------------ Initial fetch & auto-refresh ------------------ */
+fetchNews();
+setInterval(fetchNews, 60000); // refresh every 60 seconds
+</script>
+
+</body>
+</html>
