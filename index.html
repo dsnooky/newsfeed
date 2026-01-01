@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trending News Philippines</title>
+<style>
+    body {font-family: Arial, sans-serif; margin:0; background:#f4f4f4; color:#333;}
+    header {background:#007bff;color:white;padding:20px;text-align:center;}
+    header h1 {margin:0;}
+    main {padding:20px; max-width:1200px; margin:auto;}
+    .news-container {display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;}
+    .news-card {background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); overflow:hidden; transition: transform 0.2s;}
+    .news-card:hover {transform:scale(1.02);}
+    .news-card img {width:100%; height:180px; object-fit:cover;}
+    .news-card-content {padding:15px;}
+    .news-card-content h3 {margin:0 0 10px; font-size:1.1rem;}
+    .news-card-content p {font-size:0.8rem; color:#555;}
+    .news-card-content a {display:inline-block; margin-top:10px; color:#007bff; text-decoration:none; font-weight:bold;}
+    .news-card-content a:hover {text-decoration:underline;}
+    footer {text-align:center; padding:15px; background:#007bff; color:white; margin-top:40px;}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Trending News Philippines</h1>
+    <p>Aggregated news from multiple sources</p>
+</header>
+
+<main>
+    <div class="news-container" id="news-container">
+        <p>Loading news...</p>
+    </div>
+</main>
+
+<footer>
+    &copy; 2026 Trending News PH
+</footer>
+
+<script>
+const newsContainer = document.getElementById('news-container');
+
+// RSS feeds from multiple Philippine news sources
+const rssFeeds = [
+    'https://www.inquirer.net/feed',          // Inquirer
+    'https://www.philstar.com/rss',          // Philippine Star
+    'https://www.gmanetwork.com/news/rss/',  // GMA News
+    'https://www.rappler.com/rss'            // Rappler
+];
+
+// Function to fetch and display news
+async function fetchNews() {
+    newsContainer.innerHTML = '';
+    for (let feed of rssFeeds) {
+        const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`;
+        try {
+            const response = await fetch(rss2jsonUrl);
+            const data = await response.json();
+            data.items.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('news-card');
+                card.innerHTML = `
+                    <img src="${item.enclosure?.link || 'https://via.placeholder.com/400x200'}" alt="News Image">
+                    <div class="news-card-content">
+                        <h3>${item.title}</h3>
+                        <p>${new Date(item.pubDate).toLocaleString()}</p>
+                        <a href="${item.link}" target="_blank">Read More</a>
+                    </div>
+                `;
+                newsContainer.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error fetching RSS feed:', feed, error);
+        }
+    }
+}
+
+// Initial fetch
+fetchNews();
+
+// Auto refresh every 5 minutes
+setInterval(fetchNews, 300000);
+</script>
+
+</body>
+</html>
