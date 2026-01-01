@@ -2,111 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Trending Topics News | PH & Global</title>
 
-<title>Trending News Hub | PH • Global • Entertainment</title>
-
-<meta name="description" content="Auto-updating trending news from the Philippines, global headlines, and entertainment. Updated every 30 minutes.">
-<meta name="keywords" content="trending news philippines, viral news, breaking news, entertainment news, global news">
-<meta name="author" content="Trending News Hub">
+<meta name="description" content="Live trending topics from the Philippines and worldwide. Updated automatically every 30 minutes.">
+<meta name="keywords" content="trending topics philippines, viral news, trending issues, breaking topics">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Open Graph -->
-<meta property="og:title" content="Trending News Hub">
-<meta property="og:description" content="Latest trending issues from PH, Global & Entertainment">
+<meta property="og:title" content="Trending Topics News">
+<meta property="og:description" content="Auto-updating trending topics from PH and worldwide">
 <meta property="og:type" content="website">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
 
 <style>
 *{box-sizing:border-box}
 body{
  margin:0;
  font-family:Arial, sans-serif;
- background:#f2f4f8;
+ background:#f3f5f9;
 }
 
 header{
  background:#0d47a1;
  color:#fff;
- padding:20px;
+ padding:25px;
  text-align:center;
 }
 
 .search-box{
  max-width:600px;
  margin:15px auto 0;
- display:flex;
 }
 
 .search-box input{
- flex:1;
- padding:12px;
+ width:100%;
+ padding:14px;
  border:none;
- border-radius:25px;
+ border-radius:30px;
  outline:none;
  font-size:15px;
 }
 
-nav{
- display:flex;
- justify-content:center;
- gap:10px;
- padding:15px;
- background:#fff;
- flex-wrap:wrap;
-}
-
-nav button{
- padding:10px 18px;
- border:none;
- border-radius:20px;
- background:#e3e7ef;
- cursor:pointer;
- font-weight:bold;
-}
-
-nav button.active{
- background:#0d47a1;
- color:#fff;
-}
-
-.news-container{
- max-width:1000px;
+main{
+ max-width:900px;
  margin:auto;
  padding:20px;
- display:flex;
- flex-direction:column;
- gap:15px;
 }
 
-.card{
+.topic{
  background:#fff;
  border-radius:12px;
  padding:18px;
- box-shadow:0 4px 12px rgba(0,0,0,0.08);
- transition:.3s;
+ margin-bottom:12px;
+ box-shadow:0 4px 10px rgba(0,0,0,.08);
+ transition:.2s;
+ cursor:pointer;
 }
 
-.card:hover{
- transform:translateX(5px);
+.topic:hover{
+ transform:translateX(6px);
+ background:#eef3ff;
 }
 
-.card h3{
- margin:0 0 8px;
+.topic h3{
+ margin:0 0 6px;
  font-size:18px;
 }
 
-.card p{
- margin:0 0 10px;
- font-size:14px;
- color:#555;
-}
-
-.card a{
- text-decoration:none;
- color:#0d47a1;
- font-weight:bold;
+.topic span{
+ font-size:13px;
+ color:#666;
 }
 
 footer{
@@ -121,97 +85,78 @@ footer{
 <body>
 
 <header>
- <h1>🔥 Trending News Hub</h1>
- <p>Philippines • Global • Entertainment</p>
+ <h1>🔥 Trending Topics News</h1>
+ <p>Philippines & Global • Updated every 30 minutes</p>
 
  <div class="search-box">
-  <input type="text" id="search" placeholder="Search trending news...">
+  <input type="text" id="search" placeholder="Search trending topics...">
  </div>
 </header>
 
-<nav>
- <button class="active" onclick="loadCategory('all',this)">All</button>
- <button onclick="loadCategory('ph',this)">🇵🇭 Philippines</button>
- <button onclick="loadCategory('global',this)">🌍 Global</button>
- <button onclick="loadCategory('ent',this)">🎬 Entertainment</button>
-</nav>
-
-<div class="news-container" id="news"></div>
+<main id="topics"></main>
 
 <footer>
- © 2026 Trending News Hub | Auto refresh every 30 mins
+ © 2026 Trending Topics News | Frontend-Only
 </footer>
 
 <script>
-const feeds={
- all:[
-  "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en",
-  "https://trends.google.com/trends/trendingsearches/daily/rss?geo=PH",
-  "https://rss.cnn.com/rss/edition.rss",
-  "https://feeds.bbci.co.uk/news/rss.xml"
- ],
- ph:[
-  "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en"
- ],
- global:[
-  "https://rss.cnn.com/rss/edition.rss",
-  "https://feeds.bbci.co.uk/news/rss.xml"
- ],
- ent:[
-  "https://news.google.com/rss/search?q=entertainment&hl=en&gl=PH"
- ]
-};
+const PH_TRENDS = "https://trends.google.com/trends/trendingsearches/daily?geo=PH";
+const GLOBAL_TRENDS = "https://trends.google.com/trends/trendingsearches/daily";
 
-const API="https://api.rss2json.com/v1/api.json?rss_url=";
-let allArticles=[];
+let allTopics = [];
 
-async function loadCategory(cat,btn){
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
+// Google Trends requires text parsing (frontend-safe)
+async function fetchTrends(url){
+ const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url));
+ const text = await res.text();
 
- allArticles=[];
- document.getElementById("news").innerHTML="";
+ const matches = [...text.matchAll(/<title>(.*?)<\/title>/g)]
+   .map(m => m[1])
+   .filter(t => !t.includes("Trending Searches"));
 
- for(let feed of feeds[cat]){
-  const res=await fetch(API+encodeURIComponent(feed));
-  const data=await res.json();
+ return matches.slice(0,15);
+}
 
-  data.items.slice(0,8).forEach(item=>{
-   allArticles.push({
-    title:item.title,
-    desc:item.description?.replace(/<[^>]*>/g,"")||"",
-    link:item.link
-   });
-  });
- }
- render(allArticles);
+async function loadTrends(){
+ allTopics = [];
+ document.getElementById("topics").innerHTML = "Loading trending topics...";
+
+ const ph = await fetchTrends(PH_TRENDS);
+ const global = await fetchTrends(GLOBAL_TRENDS);
+
+ ph.forEach(t => allTopics.push({ title: t, region: "Philippines" }));
+ global.forEach(t => allTopics.push({ title: t, region: "Global" }));
+
+ render(allTopics);
 }
 
 function render(list){
- const container=document.getElementById("news");
- container.innerHTML="";
- list.forEach(a=>{
-  container.innerHTML+=`
-   <div class="card">
-    <h3>${a.title}</h3>
-    <p>${a.desc.slice(0,150)}...</p>
-    <a href="${a.link}" target="_blank">Read Full Story →</a>
-   </div>`;
+ const container = document.getElementById("topics");
+ container.innerHTML = "";
+
+ list.forEach(t=>{
+  container.innerHTML += `
+   <div class="topic" onclick="openNews('${encodeURIComponent(t.title)}')">
+    <h3>${t.title}</h3>
+    <span>${t.region} • Trending now</span>
+   </div>
+  `;
  });
 }
 
-document.getElementById("search").addEventListener("input",e=>{
- const q=e.target.value.toLowerCase();
- render(allArticles.filter(a=>
-  a.title.toLowerCase().includes(q)||
-  a.desc.toLowerCase().includes(q)
- ));
+function openNews(topic){
+ window.open("https://news.google.com/search?q=" + topic, "_blank");
+}
+
+document.getElementById("search").addEventListener("input", e=>{
+ const q = e.target.value.toLowerCase();
+ render(allTopics.filter(t => t.title.toLowerCase().includes(q)));
 });
 
 // Auto refresh every 30 minutes
-setInterval(()=>location.reload(),1800000);
+setInterval(loadTrends, 1800000);
 
-loadCategory("all",document.querySelector("nav button"));
+loadTrends();
 </script>
 
 </body>
