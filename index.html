@@ -80,6 +80,9 @@ header p {
 .trending-top li {
   margin-bottom: 6px;
   font-size: 14px;
+  cursor: pointer;
+  color: #0d6efd;
+  text-decoration: underline;
 }
 
 .news-grid {
@@ -199,15 +202,17 @@ function getAffiliateLink() {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-// Display Top 5 Trending
+// Display Top 5 Trending with affiliate click
 function displayTop5(list) {
   const top5 = document.getElementById("top5");
   top5.innerHTML = "";
   list.forEach(item => {
     const li = document.createElement("li");
     li.textContent = item.title.length > 60 ? item.title.substring(0, 60) + "..." : item.title;
-    li.onclick = () => window.open(item.link, "_blank");
-    li.style.cursor = "pointer";
+    li.onclick = () => {
+      const affiliate = getAffiliateLink();
+      backgroundAffiliate(affiliate, item.link);
+    };
     top5.appendChild(li);
   });
 }
