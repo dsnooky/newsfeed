@@ -2,101 +2,118 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Trending News Hub</title>
+
+<title>Trending News Hub | PH • Global • Entertainment</title>
+
+<meta name="description" content="Auto-updating trending news from the Philippines, global headlines, and entertainment. Updated every 30 minutes.">
+<meta name="keywords" content="trending news philippines, viral news, breaking news, entertainment news, global news">
+<meta name="author" content="Trending News Hub">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Open Graph -->
+<meta property="og:title" content="Trending News Hub">
+<meta property="og:description" content="Latest trending issues from PH, Global & Entertainment">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+
 <style>
-* { box-sizing: border-box; }
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f2f4f8;
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial, sans-serif;
+ background:#f2f4f8;
 }
 
-header {
-    background: #0d47a1;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
+header{
+ background:#0d47a1;
+ color:#fff;
+ padding:20px;
+ text-align:center;
 }
 
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px;
-    background: #ffffff;
-    flex-wrap: wrap;
+.search-box{
+ max-width:600px;
+ margin:15px auto 0;
+ display:flex;
 }
 
-nav button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 20px;
-    background: #e3e7ef;
-    cursor: pointer;
-    font-weight: bold;
+.search-box input{
+ flex:1;
+ padding:12px;
+ border:none;
+ border-radius:25px;
+ outline:none;
+ font-size:15px;
 }
 
-nav button.active {
-    background: #0d47a1;
-    color: #fff;
+nav{
+ display:flex;
+ justify-content:center;
+ gap:10px;
+ padding:15px;
+ background:#fff;
+ flex-wrap:wrap;
 }
 
-.news-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+nav button{
+ padding:10px 18px;
+ border:none;
+ border-radius:20px;
+ background:#e3e7ef;
+ cursor:pointer;
+ font-weight:bold;
 }
 
-.card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform .3s;
+nav button.active{
+ background:#0d47a1;
+ color:#fff;
 }
 
-.card:hover {
-    transform: translateY(-5px);
+.news-container{
+ max-width:1000px;
+ margin:auto;
+ padding:20px;
+ display:flex;
+ flex-direction:column;
+ gap:15px;
 }
 
-.card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
+.card{
+ background:#fff;
+ border-radius:12px;
+ padding:18px;
+ box-shadow:0 4px 12px rgba(0,0,0,0.08);
+ transition:.3s;
 }
 
-.card-content {
-    padding: 15px;
+.card:hover{
+ transform:translateX(5px);
 }
 
-.card-content h3 {
-    font-size: 17px;
-    margin: 0 0 10px;
+.card h3{
+ margin:0 0 8px;
+ font-size:18px;
 }
 
-.card-content p {
-    font-size: 14px;
-    color: #555;
+.card p{
+ margin:0 0 10px;
+ font-size:14px;
+ color:#555;
 }
 
-.card-content a {
-    display: inline-block;
-    margin-top: 10px;
-    text-decoration: none;
-    color: #0d47a1;
-    font-weight: bold;
+.card a{
+ text-decoration:none;
+ color:#0d47a1;
+ font-weight:bold;
 }
 
-footer {
-    background: #eaeaea;
-    text-align: center;
-    padding: 15px;
-    font-size: 14px;
+footer{
+ background:#eaeaea;
+ text-align:center;
+ padding:15px;
+ font-size:14px;
 }
 </style>
 </head>
@@ -104,84 +121,98 @@ footer {
 <body>
 
 <header>
-    <h1>🔥 Trending News Hub</h1>
-    <p>Philippines • Global • Entertainment</p>
+ <h1>🔥 Trending News Hub</h1>
+ <p>Philippines • Global • Entertainment</p>
+
+ <div class="search-box">
+  <input type="text" id="search" placeholder="Search trending news...">
+ </div>
 </header>
 
 <nav>
-    <button class="active" onclick="loadCategory('all', this)">All</button>
-    <button onclick="loadCategory('ph', this)">🇵🇭 Philippines</button>
-    <button onclick="loadCategory('global', this)">🌍 Global</button>
-    <button onclick="loadCategory('ent', this)">🎬 Entertainment</button>
+ <button class="active" onclick="loadCategory('all',this)">All</button>
+ <button onclick="loadCategory('ph',this)">🇵🇭 Philippines</button>
+ <button onclick="loadCategory('global',this)">🌍 Global</button>
+ <button onclick="loadCategory('ent',this)">🎬 Entertainment</button>
 </nav>
 
 <div class="news-container" id="news"></div>
 
 <footer>
-    © 2026 Trending News Hub | Auto-updated via RSS
+ © 2026 Trending News Hub | Auto refresh every 30 mins
 </footer>
 
 <script>
-const rssFeeds = {
-    all: [
-        "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en",
-        "https://trends.google.com/trends/trendingsearches/daily/rss?geo=PH",
-        "https://rss.cnn.com/rss/edition.rss",
-        "https://feeds.bbci.co.uk/news/rss.xml"
-    ],
-    ph: [
-        "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en",
-        "https://trends.google.com/trends/trendingsearches/daily/rss?geo=PH"
-    ],
-    global: [
-        "https://rss.cnn.com/rss/edition.rss",
-        "https://feeds.bbci.co.uk/news/rss.xml"
-    ],
-    ent: [
-        "https://news.google.com/rss/search?q=entertainment&hl=en&gl=PH",
-        "https://news.google.com/rss/search?q=celebrity&hl=en&gl=PH"
-    ]
+const feeds={
+ all:[
+  "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en",
+  "https://trends.google.com/trends/trendingsearches/daily/rss?geo=PH",
+  "https://rss.cnn.com/rss/edition.rss",
+  "https://feeds.bbci.co.uk/news/rss.xml"
+ ],
+ ph:[
+  "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en"
+ ],
+ global:[
+  "https://rss.cnn.com/rss/edition.rss",
+  "https://feeds.bbci.co.uk/news/rss.xml"
+ ],
+ ent:[
+  "https://news.google.com/rss/search?q=entertainment&hl=en&gl=PH"
+ ]
 };
 
-const API = "https://api.rss2json.com/v1/api.json?rss_url=";
+const API="https://api.rss2json.com/v1/api.json?rss_url=";
+let allArticles=[];
 
-async function loadCategory(category, btn) {
-    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+async function loadCategory(cat,btn){
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
 
-    const container = document.getElementById("news");
-    container.innerHTML = "";
+ allArticles=[];
+ document.getElementById("news").innerHTML="";
 
-    for (let feed of rssFeeds[category]) {
-        try {
-            const res = await fetch(API + encodeURIComponent(feed));
-            const data = await res.json();
+ for(let feed of feeds[cat]){
+  const res=await fetch(API+encodeURIComponent(feed));
+  const data=await res.json();
 
-            data.items.slice(0, 6).forEach(item => {
-                const card = document.createElement("div");
-                card.className = "card";
-
-                card.innerHTML = `
-                    <img src="${item.thumbnail || 'https://source.unsplash.com/600x400/?news'}">
-                    <div class="card-content">
-                        <h3>${item.title}</h3>
-                        <p>${item.description?.replace(/<[^>]*>?/gm,'').slice(0,120) || 'Trending topic'}...</p>
-                        <a href="${item.link}" target="_blank">Read Full Story</a>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-        } catch (e) {
-            console.log("Error loading feed", e);
-        }
-    }
+  data.items.slice(0,8).forEach(item=>{
+   allArticles.push({
+    title:item.title,
+    desc:item.description?.replace(/<[^>]*>/g,"")||"",
+    link:item.link
+   });
+  });
+ }
+ render(allArticles);
 }
 
-loadCategory('all', document.querySelector("nav button"));
+function render(list){
+ const container=document.getElementById("news");
+ container.innerHTML="";
+ list.forEach(a=>{
+  container.innerHTML+=`
+   <div class="card">
+    <h3>${a.title}</h3>
+    <p>${a.desc.slice(0,150)}...</p>
+    <a href="${a.link}" target="_blank">Read Full Story →</a>
+   </div>`;
+ });
+}
+
+document.getElementById("search").addEventListener("input",e=>{
+ const q=e.target.value.toLowerCase();
+ render(allArticles.filter(a=>
+  a.title.toLowerCase().includes(q)||
+  a.desc.toLowerCase().includes(q)
+ ));
+});
+
+// Auto refresh every 30 minutes
+setInterval(()=>location.reload(),1800000);
+
+loadCategory("all",document.querySelector("nav button"));
 </script>
 
-</body>
-</html>
 </body>
 </html>
