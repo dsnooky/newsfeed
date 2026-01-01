@@ -7,6 +7,11 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+<meta name="description" content="Trending news in Philippines with AI summaries and affiliate deals. Updated daily.">
+<meta property="og:title" content="Trending News Today">
+<meta property="og:description" content="Stay updated with trending news in Philippines and discover affiliate deals.">
+<meta property="og:type" content="website">
+
 <style>
 body {
   margin: 0;
@@ -37,6 +42,44 @@ header p {
   max-width: 900px;
   margin: auto;
   padding: 20px 15px;
+}
+
+.featured-affiliate {
+  background: #e7f1ff;
+  border-left: 5px solid #0d6efd;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.featured-affiliate a {
+  color: #0d6efd;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.featured-affiliate a:hover {
+  text-decoration: underline;
+}
+
+.trending-top {
+  margin-bottom: 20px;
+}
+
+.trending-top h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.trending-top ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.trending-top li {
+  margin-bottom: 6px;
+  font-size: 14px;
 }
 
 .news-grid {
@@ -108,6 +151,20 @@ header p {
 </header>
 
 <div class="container">
+
+  <!-- Featured Affiliate Box -->
+  <div class="featured-affiliate">
+    🔥 Featured Deal: Check out today's top tech gadget! 
+    <a href="https://s.shopee.ph/6VHGj0pM5t" target="_blank">Shop Now →</a>
+  </div>
+
+  <!-- Top 5 Trending Section -->
+  <div class="trending-top">
+    <h2>Top 5 Trending Today</h2>
+    <ul id="top5"></ul>
+  </div>
+
+  <!-- Main News Feed -->
   <div class="news-grid" id="news"></div>
 </div>
 
@@ -121,6 +178,7 @@ async function fetchNews() {
     const res = await fetch(api);
     const data = await res.json();
     articles = data.items || [];
+    displayTop5(articles.slice(0,5));
     displayNews(articles);
   } catch {
     document.getElementById("news").innerHTML = "<p>Failed to load news.</p>";
@@ -131,6 +189,7 @@ async function getSummary(title) {
   return title.length > 100 ? title.substring(0, 100) + "..." : title;
 }
 
+// Affiliate Links
 const affiliateLinks = {
   Default: ["https://s.shopee.ph/AKTzIGLbyS"]
 };
@@ -140,6 +199,20 @@ function getAffiliateLink() {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+// Display Top 5 Trending
+function displayTop5(list) {
+  const top5 = document.getElementById("top5");
+  top5.innerHTML = "";
+  list.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item.title.length > 60 ? item.title.substring(0, 60) + "..." : item.title;
+    li.onclick = () => window.open(item.link, "_blank");
+    li.style.cursor = "pointer";
+    top5.appendChild(li);
+  });
+}
+
+// Display Full News Feed
 async function displayNews(list) {
   const news = document.getElementById("news");
   news.innerHTML = "";
@@ -164,6 +237,7 @@ async function displayNews(list) {
   }
 }
 
+// Background affiliate click
 function backgroundAffiliate(affiliate, original) {
   const iframe = document.createElement('iframe');
   iframe.style.width = "0";
@@ -174,8 +248,9 @@ function backgroundAffiliate(affiliate, original) {
   window.location.href = original;
 }
 
+// Fetch news and refresh every 10 minutes
 fetchNews();
-setInterval(fetchNews, 60000);
+setInterval(fetchNews, 600000);
 </script>
 
 </body>
