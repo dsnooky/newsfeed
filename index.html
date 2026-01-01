@@ -5,27 +5,125 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trending Entertainment News Philippines</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; }
-header { background:#ff2d55; color:white; text-align:center; padding:20px; }
+:root {
+  --primary-color: #ff2d55;
+  --bg-color: #f4f4f4;
+  --text-color: #333;
+  --card-bg: #fff;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin:0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #f4f4f4;
+  --card-bg: #1e1e1e;
+}
+
+header {
+  background: var(--primary-color);
+  color:white;
+  text-align:center;
+  padding:20px;
+  position: relative;
+}
+
 h1 { margin:0; }
-.news-container { display:flex; flex-wrap:wrap; justify-content:center; margin:20px; }
-.news-card { background:white; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); margin:10px; width:300px; overflow:hidden; transition: transform 0.2s; }
+
+.toggle-theme {
+  position:absolute;
+  top:20px;
+  right:20px;
+  padding:5px 10px;
+  background:white;
+  color: var(--primary-color);
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.search-bar {
+  display:flex;
+  justify-content:center;
+  margin:15px 0;
+}
+.search-bar input {
+  width:80%;
+  padding:10px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  font-size:1em;
+}
+
+.news-container {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:20px;
+}
+
+.news-card {
+  background: var(--card-bg);
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+  margin:10px;
+  width:300px;
+  overflow:hidden;
+  transition: transform 0.2s;
+}
 .news-card:hover { transform: translateY(-5px); }
+
 .news-card img { width:100%; height:180px; object-fit:cover; }
 .news-card h3 { margin:10px; font-size:1.1em; }
 .news-card p { margin:10px; font-size:0.9em; color:#555; }
-.news-card a { text-decoration:none; color:#ff2d55; font-weight:bold; margin:10px; display:inline-block; }
+.news-card a { text-decoration:none; color:var(--primary-color); font-weight:bold; margin:10px; display:inline-block; }
+
 footer { background:#222; color:white; text-align:center; padding:15px; margin-top:20px; }
+
+.carousel {
+  display:flex;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding:10px;
+}
+.carousel::-webkit-scrollbar { display:none; }
+
+.carousel-card {
+  min-width:300px;
+  margin-right:10px;
+  border-radius:10px;
+  overflow:hidden;
+  flex-shrink:0;
+  background: var(--card-bg);
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+.carousel-card img { width:100%; height:180px; object-fit:cover; }
+.carousel-card h3 { margin:10px; font-size:1em; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Trending Entertainment News Philippines</h1>
+  <button class="toggle-theme">Toggle Theme</button>
 </header>
 
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search articles...">
+</div>
+
+<h2 style="text-align:center;">Top Trending</h2>
+<div class="carousel" id="trending-carousel">
+  <!-- Top 5 trending articles -->
+</div>
+
 <div class="news-container" id="news-container">
-  <!-- News articles will appear here -->
+  <!-- All articles -->
 </div>
 
 <footer>
@@ -33,7 +131,6 @@ footer { background:#222; color:white; text-align:center; padding:15px; margin-t
 </footer>
 
 <script>
-// RSS feeds to aggregate
 const rssFeeds = [
   'https://news.abs-cbn.com/entertainment/rss',
   'https://www.gmanetwork.com/entertainment/showbiznews/rss',
@@ -41,7 +138,6 @@ const rssFeeds = [
   'https://www.rappler.com/section/entertainment/feed/'
 ];
 
-// Use rss2json.com to convert RSS to JSON
 async function fetchFeed(url) {
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
   const res = await fetch(apiUrl);
@@ -49,43 +145,72 @@ async function fetchFeed(url) {
   return data.items;
 }
 
-// Load all feeds and merge
+let allNews = [];
+
 async function loadNews() {
   try {
-    const allNews = [];
+    allNews = [];
     for (const feed of rssFeeds) {
       const items = await fetchFeed(feed);
       allNews.push(...items);
     }
 
-    // Sort by publication date (newest first)
-    allNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+    allNews.sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-    const newsContainer = document.getElementById('news-container');
-    newsContainer.innerHTML = '';
-
-    allNews.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'news-card';
-      card.innerHTML = `
-        <img src="${item.thumbnail || 'https://via.placeholder.com/300x180'}" alt="${item.title}">
-        <h3>${item.title}</h3>
-        <p>${new Date(item.pubDate).toLocaleDateString()}</p>
-        <a href="${item.link}" target="_blank">Read More</a>
-      `;
-      newsContainer.appendChild(card);
-    });
+    displayTrending();
+    displayAllNews(allNews);
 
   } catch (err) {
     console.error('Error loading news:', err);
   }
 }
 
+function displayTrending() {
+  const trending = document.getElementById('trending-carousel');
+  trending.innerHTML = '';
+  allNews.slice(0,5).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'carousel-card';
+    card.innerHTML = `
+      <img src="${item.thumbnail || 'https://via.placeholder.com/300x180'}" alt="${item.title}">
+      <h3>${item.title}</h3>
+    `;
+    trending.appendChild(card);
+  });
+}
+
+function displayAllNews(newsArray) {
+  const container = document.getElementById('news-container');
+  container.innerHTML = '';
+  newsArray.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'news-card';
+    card.innerHTML = `
+      <img src="${item.thumbnail || 'https://via.placeholder.com/300x180'}" alt="${item.title}">
+      <h3>${item.title}</h3>
+      <p>${new Date(item.pubDate).toLocaleDateString()}</p>
+      <a href="${item.link}" target="_blank">Read More</a>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  const filtered = allNews.filter(item => item.title.toLowerCase().includes(query));
+  displayAllNews(filtered);
+});
+
+// Theme toggle
+document.querySelector('.toggle-theme').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+});
+
 // Initial load
 loadNews();
-
-// Refresh every 30 minutes
-setInterval(loadNews, 30 * 60 * 1000);
+setInterval(loadNews, 30 * 60 * 1000); // refresh every 30 mins
 </script>
 
 </body>
