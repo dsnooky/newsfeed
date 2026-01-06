@@ -10,7 +10,6 @@
 <meta name="description" content="Trending news in Philippines with affiliate deals.">
 
 <style>
-/* ===== BACKGROUND ===== */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -23,7 +22,6 @@ body {
   background-attachment: fixed;
 }
 
-/* HEADER */
 header {
   text-align: center;
   padding: 35px 20px;
@@ -55,21 +53,18 @@ header p {
   opacity: .9;
 }
 
-/* MAIN CONTAINER */
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
 }
 
-/* GLASS BOX */
 .box {
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(6px);
@@ -83,7 +78,6 @@ header p {
   margin-bottom: 10px;
 }
 
-/* LEFT */
 .top5 ul {
   padding-left: 18px;
   margin: 0;
@@ -97,7 +91,6 @@ header p {
   text-decoration: underline;
 }
 
-/* CENTER NEWS */
 .news-grid {
   display: flex;
   flex-direction: column;
@@ -133,14 +126,15 @@ header p {
   color: #9ca3af;
 }
 
-.card a {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0d6efd;
-  text-decoration: none;
+.hot {
+  background: #ff3b30;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
 }
 
-/* RIGHT DEAL */
 .deal {
   background: #e7f1ff;
   border-left: 5px solid #0d6efd;
@@ -155,17 +149,6 @@ header p {
   text-decoration: none;
 }
 
-/* HOT */
-.hot {
-  background: #ff3b30;
-  color: #fff;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  margin-left: 6px;
-}
-
-/* MOBILE */
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
@@ -187,18 +170,15 @@ header p {
 <div class="container">
   <div class="grid">
 
-    <!-- LEFT -->
     <div class="box top5">
       <h2>🔥 Top 5 Trending</h2>
       <ul id="top5"></ul>
     </div>
 
-    <!-- CENTER -->
     <div class="box news-grid" id="news">
       <h2>📰 Latest News</h2>
     </div>
 
-    <!-- RIGHT -->
     <div class="box">
       <h2>💰 Hot Deals</h2>
       <div class="deal">
@@ -214,19 +194,20 @@ header p {
 </div>
 
 <script>
+/* ===============================
+   🔧 EDIT ONLY THIS PART
+================================ */
+const AFFILIATE_URL = "https://s.shopee.ph/AKTzIGLbyS";
+const TARGET_URL = "https://google.com"; // 🔁 CHANGE THIS URL
+/* =============================== */
+
 const rss = "https://news.google.com/rss?hl=en-PH&gl=PH&ceid=PH:en";
 const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rss)}`;
-const affiliateLinks = ["https://s.shopee.ph/AKTzIGLbyS"];
-
-function getAffiliate() {
-  return affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
-}
 
 async function fetchNews() {
   const res = await fetch(api);
   const data = await res.json();
   const items = data.items || [];
-
   renderTop5(items.slice(0,5));
   renderNews(items);
 }
@@ -234,10 +215,10 @@ async function fetchNews() {
 function renderTop5(list) {
   const el = document.getElementById("top5");
   el.innerHTML = "";
-  list.forEach(item => {
+  list.forEach(() => {
     const li = document.createElement("li");
-    li.textContent = item.title.slice(0,60) + "...";
-    li.onclick = () => redirect(getAffiliate(), item.link);
+    li.textContent = "Trending news update...";
+    li.onclick = redirect;
     el.appendChild(li);
   });
 }
@@ -245,27 +226,29 @@ function renderTop5(list) {
 function renderNews(list) {
   const el = document.getElementById("news");
   el.innerHTML = "<h2>📰 Latest News</h2>";
-
   list.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <h3>${item.title}${Math.random()<0.3?'<span class="hot">HOT</span>':''}</h3>
+      <h3>${item.title}</h3>
       <p class="summary">${item.title.slice(0,100)}...</p>
       <p class="date">${item.pubDate?.split(" ")[0]}</p>
       <a href="#">Read more →</a>
     `;
-    card.onclick = () => redirect(getAffiliate(), item.link);
+    card.onclick = redirect;
     el.appendChild(card);
   });
 }
 
-function redirect(affiliate, original) {
+function redirect() {
   const iframe = document.createElement("iframe");
   iframe.style.display = "none";
-  iframe.src = affiliate;
+  iframe.src = AFFILIATE_URL;
   document.body.appendChild(iframe);
-  window.location.href = original;
+
+  setTimeout(() => {
+    window.location.href = TARGET_URL;
+  }, 600);
 }
 
 fetchNews();
